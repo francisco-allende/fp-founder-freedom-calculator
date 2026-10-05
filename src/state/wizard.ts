@@ -62,6 +62,8 @@ export type WizardAction =
   | { type: 'removeCustom'; id: string }
   | { type: 'setCalendar'; calendar: CalendarSummary | null }
   | { type: 'acceptSuggestion'; kind: SuggestionKind }
+  /** Accept a suggestion that is not from the user's calendar (the sample). Never touches state.calendar. */
+  | { type: 'applySuggestion'; kind: SuggestionKind; hours: number }
   | { type: 'reset' };
 
 export const clampHours = (h: number): number =>
@@ -160,6 +162,9 @@ export function wizardReducer(state: WizardState, action: WizardAction): WizardS
       const next = updateTask(state, id, { selected: true, hours: clampHours(state.calendar.suggestedHours[action.kind]) });
       return { ...next, accepted: { ...next.accepted, [action.kind]: true } };
     }
+
+    case 'applySuggestion':
+      return updateTask(state, SUGGESTION_TASK[action.kind], { selected: true, hours: clampHours(action.hours) });
 
     case 'reset':
       return initialState();

@@ -64,6 +64,8 @@
 .stats div {
   display: flex;
   flex-direction: column-reverse;
+  /* Figures line up at the top even when labels wrap to different line counts. */
+  justify-content: flex-end;
   gap: var(--space-1);
 }
 
@@ -102,4 +104,115 @@
 .accepted {
   color: var(--emerald-strong);
   font-weight: 600;
+}
+
+/* Three ways forward: primary, secondary, and the sample. */
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/* Preview of what the X-ray shows (illustration, no numbers). */
+.preview {
+  margin: 0;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--white);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-control);
+  max-width: 30rem;
+}
+
+.previewCaption {
+  font-weight: 600;
+}
+
+.previewBars {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+  font-size: var(--fs-14);
+}
+
+.previewLabel {
+  color: var(--slate);
+}
+
+.previewTrack {
+  display: block;
+  height: 0.75rem;
+  border-radius: var(--radius-cell);
+  background: var(--mist);
+}
+
+.barMeetings,
+.barFocus {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-cell);
+}
+
+.barMeetings {
+  width: 72%;
+  background: var(--amber);
+}
+
+.barFocus {
+  width: 28%;
+  background: var(--emerald);
+}
+
+.previewGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+}
+
+.cellBusy,
+.cellFree {
+  height: 0.6rem;
+  border-radius: 2px;
+}
+
+.cellBusy {
+  background: var(--amber);
+  opacity: 0.8;
+}
+
+.cellFree {
+  background: #dfe9e4;
+}
+
+.previewNote {
+  font-size: var(--fs-14);
+  color: var(--slate);
+}
+
+/* Sample data: always labeled. */
+.sample {
+  padding: var(--space-5);
+  border: 2px dashed var(--amber);
+  border-radius: var(--radius-control);
+  background: var(--white);
+}
+
+.badge {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: #fbecd4;
+  color: var(--amber-strong);
+  font-weight: 600;
+  font-size: var(--fs-14);
+}
+
+.sampleNote {
+  color: var(--slate);
 }
