@@ -2,6 +2,7 @@ import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, 
 import { REPORT } from '../data/pageCopy';
 import { formatHours } from '../engine/format';
 import type { AreaHours } from '../engine/math';
+import { useElementWidth } from '../hooks/useElementWidth';
 import { CHART, ChartLegend, DataTable, TooltipBox } from './chartParts';
 
 interface Row {
@@ -23,9 +24,15 @@ export function WeekChart({ byArea }: { byArea: AreaHours[] }) {
     label: `${formatHours(a.delegable)} of ${formatHours(a.total)} h`,
   }));
   const height = rows.length * 44 + 40;
+  // Axis and label space scale with the chart's own width, so bars keep room at 375px.
+  const [ref, width] = useElementWidth<HTMLElement>();
+  const narrow = width < 520;
+  const axisWidth = Math.round(Math.min(150, Math.max(84, width * 0.28)));
+  const labelSpace = narrow ? 70 : 96;
+  const tickSize = narrow ? 11 : 13;
 
   return (
-    <figure className="chart">
+    <figure className="chart" ref={ref}>
       <ChartLegend
         items={[
           { label: c.handed, color: CHART.handed },
@@ -34,7 +41,7 @@ export function WeekChart({ byArea }: { byArea: AreaHours[] }) {
       />
       <div style={{ width: '100%', height }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 96, bottom: 4, left: 0 }} barSize={20}>
+          <BarChart data={rows} layout="vertical" margin={{ top: 4, right: labelSpace, bottom: 4, left: 0 }} barSize={20}>
             <CartesianGrid horizontal={false} stroke={CHART.grid} strokeWidth={1} />
             <XAxis
               type="number"
@@ -47,10 +54,10 @@ export function WeekChart({ byArea }: { byArea: AreaHours[] }) {
             <YAxis
               type="category"
               dataKey="area"
-              width={150}
+              width={axisWidth}
               tickLine={false}
               axisLine={false}
-              tick={{ fill: CHART.ink, fontSize: 13 }}
+              tick={{ fill: CHART.ink, fontSize: tickSize }}
             />
             <Tooltip
               cursor={{ fill: 'rgba(14, 42, 34, 0.04)' }}
@@ -77,7 +84,7 @@ export function WeekChart({ byArea }: { byArea: AreaHours[] }) {
               radius={[0, 4, 4, 0]}
               isAnimationActive={false}
             >
-              <LabelList dataKey="label" position="right" fill={CHART.muted} fontSize={12} />
+              <LabelList dataKey="label" position="right" fill={CHART.muted} fontSize={narrow ? 11 : 12} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>

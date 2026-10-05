@@ -18,7 +18,7 @@
   margin-inline: calc(var(--gutter) * -1);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45rem) {
   .card {
     margin-inline: 0;
     padding: var(--space-6);
@@ -32,7 +32,7 @@
   margin: 0;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45rem) {
   .summary {
     grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     align-items: end;
@@ -85,7 +85,7 @@
   gap: var(--space-5);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45rem) {
   .map {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -124,7 +124,7 @@
   gap: var(--space-5);
 }
 
-@media (min-width: 960px) {
+@media (min-width: 60rem) {
   .timeline {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -196,7 +196,7 @@
   margin-inline: calc(var(--gutter) * -1);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45rem) {
   .cta {
     margin-inline: 0;
     padding: var(--space-6);

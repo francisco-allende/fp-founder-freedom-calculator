@@ -4,7 +4,7 @@
   margin: 0;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45rem) {
   .numbers {
     grid-template-columns: 1.3fr 1fr 1fr;
     align-items: end;
@@ -52,7 +52,7 @@
   max-height: 16rem;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45rem) {
   .blur {
     grid-template-columns: 1fr 1fr;
   }
@@ -80,7 +80,7 @@
   color: var(--white);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45rem) {
   .gate {
     margin-inline: 0;
     padding: var(--space-6);

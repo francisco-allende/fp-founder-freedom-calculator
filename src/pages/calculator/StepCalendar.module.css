@@ -14,7 +14,7 @@
   gap: var(--space-5);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45rem) {
   .guides {
     grid-template-columns: 1fr 1fr;
   }
@@ -55,7 +55,7 @@
   margin: 0;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 37.5rem) {
   .stats {
     grid-template-columns: repeat(3, 1fr);
   }

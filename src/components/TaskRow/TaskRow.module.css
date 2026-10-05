@@ -76,7 +76,7 @@
   color: var(--ink);
 }
 
-@media (min-width: 600px) {
+@media (min-width: 37.5rem) {
   .sliders {
     grid-template-columns: 1fr 1fr;
     padding-left: calc(22px + var(--space-3));

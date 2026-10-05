@@ -72,16 +72,23 @@
   align-items: center;
 }
 
+/* Fits the screen at 375px: fixed layout, headers wrap, figures never push the table wider. */
 .chart-table table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
-  font-size: var(--fs-14);
+  font-size: clamp(0.75rem, 0.7rem + 0.4vw, var(--fs-14));
+}
+
+.chart-table th {
+  overflow-wrap: anywhere;
+  vertical-align: bottom;
 }
 
 .chart-table th,
 .chart-table td {
   text-align: left;
-  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  padding: var(--space-2) var(--space-2) var(--space-2) 0;
   border-bottom: 1px solid var(--line);
 }
 

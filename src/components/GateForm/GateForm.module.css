@@ -3,9 +3,12 @@
   gap: var(--space-4);
 }
 
+/* form_embed.js auto-resizes the form; the min-height is the fallback that keeps the submit
+   button reachable if it reports no height (see the booking calendar on /book). */
 .frame {
+  display: block;
   width: 100%;
-  min-height: 720px;
+  min-height: 60rem;
   border: none;
   border-radius: var(--radius-control);
   background: var(--white);
@@ -25,4 +28,10 @@
 .continue {
   color: var(--ink);
   border-radius: var(--radius-control);
+}
+
+@media (min-width: 40rem) {
+  .frame {
+    min-height: 50rem;
+  }
 }

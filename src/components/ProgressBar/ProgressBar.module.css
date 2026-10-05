@@ -33,7 +33,7 @@
 }
 
 /* On small screens only the current label shows; numbers carry the sequence. */
-@media (max-width: 599px) {
+@media (max-width: 37.4375rem) {
   .item:not(.current) .label {
     position: absolute;
     width: 1px;
@@ -43,7 +43,7 @@
   }
 }
 
-@media (max-width: 599px) {
+@media (max-width: 37.4375rem) {
   /* The current label may run into the next column (whose label is hidden). */
   .current .label {
     white-space: nowrap;

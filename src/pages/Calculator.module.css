@@ -34,7 +34,7 @@
   max-width: 46rem;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 60rem) {
   .withTotal {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 20rem;
