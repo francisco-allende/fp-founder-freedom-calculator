@@ -1,8 +1,8 @@
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { REPORT } from '../data/pageCopy';
-import { formatHours, formatMoney } from '../engine/format';
 import type { CumulativePoint } from '../engine/math';
 import { CHART, ChartLegend, DataTable, TooltipBox } from './chartParts';
+import { hoursWhole, moneyCompact } from '../lib/display';
 
 const thousands = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
@@ -26,7 +26,7 @@ export function YearChart({ realistic, low }: { realistic: CumulativePoint[]; lo
           { label: c.low, color: CHART.muted },
         ]}
       />
-      {last && <p className="chart-end num">{c.end(formatHours(last.hours), formatMoney(last.dollars))}</p>}
+      {last && <p className="chart-end num">{c.end(hoursWhole(last.hours), moneyCompact(last.dollars))}</p>}
       <div style={{ width: '100%', height: 280 }}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={rows} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
@@ -54,8 +54,8 @@ export function YearChart({ realistic, low }: { realistic: CumulativePoint[]; lo
                   <TooltipBox
                     title={`Month ${r.month}`}
                     rows={[
-                      { label: c.realistic, value: `${formatHours(r.hours)} h · ${formatMoney(r.dollars)}`, color: CHART.handed },
-                      { label: c.low, value: `${formatHours(r.lowHours)} h · ${formatMoney(r.lowDollars)}`, color: CHART.muted },
+                      { label: c.realistic, value: `${hoursWhole(r.hours)} h · ${moneyCompact(r.dollars)}`, color: CHART.handed },
+                      { label: c.low, value: `${hoursWhole(r.lowHours)} h · ${moneyCompact(r.lowDollars)}`, color: CHART.muted },
                     ]}
                   />
                 ) : null;
@@ -97,10 +97,10 @@ export function YearChart({ realistic, low }: { realistic: CumulativePoint[]; lo
         head={['Month', `${c.realistic} hours`, `${c.realistic} value`, `${c.low} hours`, `${c.low} value`]}
         rows={rows.map((r) => [
           String(r.month),
-          formatHours(r.hours),
-          formatMoney(r.dollars),
-          formatHours(r.lowHours),
-          formatMoney(r.lowDollars),
+          hoursWhole(r.hours),
+          moneyCompact(r.dollars),
+          hoursWhole(r.lowHours),
+          moneyCompact(r.lowDollars),
         ])}
       />
     </figure>

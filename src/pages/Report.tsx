@@ -5,12 +5,12 @@ import { Heatmap } from '../components/Heatmap/Heatmap';
 import { PageShell } from '../components/PageShell/PageShell';
 import { FOOTNOTE, WIZARD } from '../data/copy';
 import { NAV, REPORT } from '../data/pageCopy';
-import { formatHours, formatMoney, formatMultiple } from '../engine/format';
+import { formatHours, formatMultiple } from '../engine/format';
 import { decodeReport } from '../engine/reportState';
-import type { RoadmapItem } from '../engine/roadmap';
 import '../report/charts.css';
 import { METHOD_ITEMS } from '../report/method';
 import { buildReportModel, pdfFileName, type ReportModel } from '../report/model';
+import { ReportSummary, RoadmapTimeline, TaskMapColumns } from '../report/sections';
 import { WeekChart } from '../report/WeekChart';
 import { YearChart } from '../report/YearChart';
 import styles from './Report.module.css';
@@ -71,34 +71,6 @@ function PdfButton({ model }: { model: ReportModel }) {
   );
 }
 
-function Phase({ n, title, items }: { n: number; title: string; items: RoadmapItem[] }) {
-  return (
-    <li className={styles.phase}>
-      <h3>
-        <span className={styles.phaseNum} aria-hidden="true">
-          {n}
-        </span>{' '}
-        {title}
-      </h3>
-      {items.length === 0 ? (
-        <p className={styles.muted}>{REPORT.roadmap.empty}</p>
-      ) : (
-        <ul>
-          {items.map((i) => (
-            <li key={i.taskId || i.name}>
-              <p className={styles.itemName}>
-                {i.name}
-                {i.kind === 'task' && <span className={`num ${styles.muted}`}> · {REPORT.roadmap.hours(formatHours(i.hours))}</span>}
-              </p>
-              {i.kind === 'task' && <p className={styles.tip}>{i.tip}</p>}
-            </li>
-          ))}
-        </ul>
-      )}
-    </li>
-  );
-}
-
 export default function Report() {
   const [params] = useSearchParams();
   const { hash } = useLocation();
@@ -129,7 +101,6 @@ export default function Report() {
   }
 
   const { results, roadmap, map, calendar } = model;
-  const [p1, p2, p3] = REPORT.roadmap.phases;
 
   return (
     <PageShell wide>
@@ -139,32 +110,7 @@ export default function Report() {
       </section>
 
       <section aria-label="Summary" className={styles.section}>
-        <dl className={styles.summary}>
-          <div className={styles.lead}>
-            <dt>{REPORT.summary.hours}</dt>
-            <dd>
-              {formatHours(results.hours.low)}–{formatHours(results.hours.realistic)}
-            </dd>
-          </div>
-          <div>
-            <dt>{REPORT.summary.month}</dt>
-            <dd>
-              {formatMoney(results.monthly.low)}–{formatMoney(results.monthly.realistic)}
-            </dd>
-          </div>
-          <div>
-            <dt>{REPORT.summary.year}</dt>
-            <dd>
-              {formatMoney(results.annual.low)}–{formatMoney(results.annual.realistic)}
-            </dd>
-          </div>
-          <div>
-            <dt>{REPORT.summary.yearHours}</dt>
-            <dd>
-              {formatHours(results.hoursPerYear.low)}–{formatHours(results.hoursPerYear.realistic)}
-            </dd>
-          </div>
-        </dl>
+        <ReportSummary results={results} />
         <p className={styles.footnote}>{FOOTNOTE}</p>
       </section>
 
@@ -182,43 +128,18 @@ export default function Report() {
 
       <section aria-labelledby="map-heading" className={styles.section}>
         <h2 id="map-heading">{REPORT.map.heading}</h2>
-        <div className={styles.map}>
-          {(
-            [
-              [REPORT.map.handOff, map.handOff, styles.colHanded],
-              [REPORT.map.approval, map.handOffWithApproval, styles.colApproval],
-              [REPORT.map.keep, map.keep, styles.colKeep],
-            ] as const
-          ).map(([title, list, cls]) => (
-            <div key={title} className={cls}>
-              <h3>{title}</h3>
-              {list.length === 0 ? (
-                <p className={styles.muted}>{REPORT.map.empty}</p>
-              ) : (
-                <ul>
-                  {list.map((t) => (
-                    <li key={t.id}>{t.name}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
-        </div>
+        <TaskMapColumns map={map} />
       </section>
 
       <section aria-labelledby="plan-heading" className={styles.section}>
         <h2 id="plan-heading">{REPORT.roadmap.heading}</h2>
-        <ol className={styles.timeline}>
-          <Phase n={1} title={p1} items={roadmap.weeks1to2} />
-          <Phase n={2} title={p2} items={roadmap.month1} />
-          <Phase n={3} title={p3} items={roadmap.months2to3} />
-        </ol>
+        <RoadmapTimeline roadmap={roadmap} />
       </section>
 
       {calendar && (
         <section aria-labelledby="calendar-heading" className={`${styles.section} ${styles.card}`}>
           <h2 id="calendar-heading">{REPORT.calendar.heading}</h2>
-          <dl className={styles.summary}>
+          <dl className={styles.stats}>
             <div>
               <dt>{WIZARD.calendar.stats.meetings}</dt>
               <dd>{formatHours(calendar.meetingHoursPerWeek)}</dd>

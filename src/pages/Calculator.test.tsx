@@ -40,18 +40,20 @@ describe('calculator flow', () => {
     // Step 2: 14 preselected tasks → 16.05 h, shown as 16.1; heading takes focus.
     const heading = screen.getByRole('heading', { level: 1, name: 'Where do your hours go?' });
     expect(document.activeElement).toBe(heading);
-    expect(screen.getByText('11.2 to 16.1 hours, realistically')).toBeInTheDocument();
+    expect(screen.getByText('11 to 16 hours, realistically')).toBeInTheDocument();
+    expect(screen.getByText('That time is worth $13.8K a month.')).toBeInTheDocument();
     expect(screen.getAllByText('needs your approval').length).toBeGreaterThan(0);
 
     // Switching off email (5h × 70% = 3.5h) updates the live total.
     fireEvent.click(screen.getByRole('checkbox', { name: 'Include Sorting and answering email' }));
-    expect(screen.getByText('8.8 to 12.6 hours, realistically')).toBeInTheDocument();
+    expect(screen.getByText('9 to 13 hours, realistically')).toBeInTheDocument();
+    expect(screen.getByText('That time is worth $10.8K a month.')).toBeInTheDocument();
 
     // Add a custom task (defaults 1h × 50%).
     fireEvent.change(screen.getByLabelText('Task name'), { target: { value: 'Board updates' } });
     fireEvent.click(screen.getByRole('button', { name: 'Add this task' }));
     expect(screen.getByRole('heading', { name: 'Your own tasks' })).toBeInTheDocument();
-    expect(screen.getByText('9.1 to 13.1 hours, realistically')).toBeInTheDocument();
+    expect(screen.getByText('That time is worth $11.2K a month.')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
@@ -63,7 +65,7 @@ describe('calculator flow', () => {
 
     // Step 4: headline numbers, footnote, gate.
     expect(screen.getByRole('heading', { level: 1, name: 'Fran, here is what your week is hiding' })).toBeInTheDocument();
-    expect(screen.getByText('9.1–13.1')).toBeInTheDocument();
+    expect(screen.getByText('9–13')).toBeInTheDocument(); // whole hours in ranges (design rule 7)
     expect(screen.getByText('Estimates based on your inputs and Pareto Talent client data.')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Your full report and 90-day plan are ready. Where should we send them?' })).toBeInTheDocument();
 

@@ -1,3 +1,5 @@
+/* Page-level layout for /report. Shared sections (summary, task map, plan) live in src/report/sections.module.css. */
+
 .top {
   display: flex;
   flex-wrap: wrap;
@@ -26,46 +28,37 @@
   }
 }
 
-.summary {
+.stats {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-4);
   margin: 0;
 }
 
-@media (min-width: 45rem) {
-  .summary {
-    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-    align-items: end;
+@media (min-width: 37.5rem) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-.summary div {
+.stats div {
   display: flex;
   flex-direction: column-reverse;
   gap: var(--space-1);
 }
 
-.summary dt {
+.stats dt {
   font-size: var(--fs-14);
   color: var(--slate);
 }
 
-/* Big standalone figures use proportional digits. */
-.summary dd {
+.stats dd {
   margin: 0;
   font-weight: 600;
-  font-size: var(--fs-25);
-  line-height: 1.1;
+  font-size: clamp(1.375rem, 1.1rem + 1vw, var(--fs-25));
+  white-space: nowrap;
 }
 
-.lead dd {
-  font-size: var(--fs-49);
-  color: var(--emerald-strong);
-  letter-spacing: -0.02em;
-}
-
-.footnote,
-.muted {
+.footnote {
   font-size: var(--fs-14);
   color: var(--slate);
 }
@@ -78,86 +71,6 @@
 .error {
   font-size: var(--fs-14);
   color: #b42318;
-}
-
-.map {
-  display: grid;
-  gap: var(--space-5);
-}
-
-@media (min-width: 45rem) {
-  .map {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.map h3 {
-  padding-bottom: var(--space-2);
-  margin-bottom: var(--space-2);
-  border-bottom: 3px solid;
-}
-
-.map ul {
-  margin: 0;
-  padding-left: 1.1rem;
-  display: grid;
-  gap: var(--space-1);
-}
-
-.colHanded h3 {
-  border-color: var(--emerald);
-}
-
-.colApproval h3 {
-  border-color: var(--emerald-strong);
-}
-
-.colKeep h3 {
-  border-color: var(--amber);
-}
-
-.timeline {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-5);
-}
-
-@media (min-width: 60rem) {
-  .timeline {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.phase {
-  display: grid;
-  gap: var(--space-3);
-  align-content: start;
-  padding-top: var(--space-3);
-  border-top: 4px solid var(--emerald);
-}
-
-.phase ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-4);
-}
-
-.phaseNum {
-  font-variant-numeric: tabular-nums;
-  color: var(--emerald-strong);
-}
-
-.itemName {
-  font-weight: 600;
-}
-
-.tip {
-  font-size: var(--fs-14);
-  color: var(--slate);
 }
 
 .method summary {

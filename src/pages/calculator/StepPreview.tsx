@@ -3,7 +3,6 @@ import { Button } from '../../components/Button/Button';
 import { GateForm } from '../../components/GateForm/GateForm';
 import { StepHeading } from '../../components/StepHeading/StepHeading';
 import { FOOTNOTE, WIZARD } from '../../data/copy';
-import { formatHours, formatMoney } from '../../engine/format';
 import { topTaskNames } from '../../engine/math';
 import { qualify } from '../../engine/qualify';
 import { buildReportUrl, toReportCalendar } from '../../engine/reportState';
@@ -13,6 +12,7 @@ import { getUtm } from '../../lib/utm';
 import styles from './Step.module.css';
 import local from './StepPreview.module.css';
 import type { StepProps } from './types';
+import { hoursRange, moneyRange } from '../../lib/display';
 
 export function siteOrigin(): string {
   return (import.meta.env.VITE_SITE_URL || window.location.origin).replace(/\/+$/, '');
@@ -66,19 +66,19 @@ export function StepPreview({ state, tasks, results, go, focusHeading }: StepPro
         <div className={local.lead}>
           <dt>{p.hours}</dt>
           <dd className="num">
-            {formatHours(results.hours.low)}–{formatHours(results.hours.realistic)}
+            {hoursRange(results.hours.low, results.hours.realistic)}
           </dd>
         </div>
         <div>
           <dt>{p.month}</dt>
           <dd className="num">
-            {formatMoney(results.monthly.low)}–{formatMoney(results.monthly.realistic)}
+            {moneyRange(results.monthly.low, results.monthly.realistic)}
           </dd>
         </div>
         <div>
           <dt>{p.year}</dt>
           <dd className="num">
-            {formatMoney(results.annual.low)}–{formatMoney(results.annual.realistic)}
+            {moneyRange(results.annual.low, results.annual.realistic)}
           </dd>
         </div>
       </dl>

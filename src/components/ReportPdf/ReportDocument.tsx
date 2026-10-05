@@ -1,10 +1,11 @@
 import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { BRAND, FOOTNOTE } from '../../data/copy';
 import { REPORT } from '../../data/pageCopy';
-import { formatHours, formatMoney, formatMultiple } from '../../engine/format';
+import { formatHours, formatMultiple } from '../../engine/format';
 import type { RoadmapItem } from '../../engine/roadmap';
 import type { ReportModel } from '../../report/model';
 import { METHOD_ITEMS } from '../../report/method';
+import { hoursRange, moneyRange } from '../../lib/display';
 
 // Loaded only when someone clicks "Download PDF" (SPEC §10). Built-in Helvetica keeps text selectable.
 
@@ -78,19 +79,19 @@ export function ReportDocument({ model }: { model: ReportModel }) {
         <View style={s.row}>
           <View style={s.stat}>
             <Text style={s.statValue}>
-              {formatHours(results.hours.low)}–{formatHours(results.hours.realistic)}
+              {hoursRange(results.hours.low, results.hours.realistic)}
             </Text>
             <Text style={s.statLabel}>{REPORT.summary.hours}</Text>
           </View>
           <View style={s.stat}>
             <Text style={s.statValue}>
-              {formatMoney(results.monthly.low)}–{formatMoney(results.monthly.realistic)}
+              {moneyRange(results.monthly.low, results.monthly.realistic)}
             </Text>
             <Text style={s.statLabel}>{REPORT.summary.month}</Text>
           </View>
           <View style={s.stat}>
             <Text style={s.statValue}>
-              {formatMoney(results.annual.low)}–{formatMoney(results.annual.realistic)}
+              {moneyRange(results.annual.low, results.annual.realistic)}
             </Text>
             <Text style={s.statLabel}>{REPORT.summary.year}</Text>
           </View>

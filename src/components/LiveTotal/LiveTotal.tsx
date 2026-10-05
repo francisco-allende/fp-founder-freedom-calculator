@@ -1,9 +1,10 @@
 import { WIZARD } from '../../data/copy';
-import { formatHours, formatMoney } from '../../engine/format';
+import { formatHours } from '../../engine/format';
 import type { Results } from '../../engine/math';
 import { useAnimatedNumber } from '../../hooks/useAnimatedNumber';
 import { useDebounced } from '../../hooks/useDebounced';
 import styles from './LiveTotal.module.css';
+import { hoursWhole, moneyCompact } from '../../lib/display';
 
 const MAX_CELLS = 60;
 
@@ -43,8 +44,8 @@ export function LiveTotal({ results }: { results: Results }) {
         </span>
       </p>
       <div className={styles.details}>
-        <p className={`num ${styles.range}`}>{WIZARD.live.range(formatHours(hours.low), formatHours(hours.realistic))}</p>
-        <p className={`num ${styles.cost}`}>{WIZARD.live.cost(formatMoney(monthly.realistic))}</p>
+        <p className={`num ${styles.range}`}>{WIZARD.live.range(hoursWhole(hours.low), hoursWhole(hours.realistic))}</p>
+        <p className={`num ${styles.cost}`}>{WIZARD.live.cost(moneyCompact(monthly.realistic))}</p>
         <HourCells total={totalHours} delegable={hours.realistic} />
       </div>
     </aside>

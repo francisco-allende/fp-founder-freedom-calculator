@@ -12,6 +12,7 @@
 }
 
 .numbers div {
+  min-width: 0;
   display: flex;
   flex-direction: column-reverse;
   gap: var(--space-1);
@@ -26,12 +27,13 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--fs-25);
+  font-size: clamp(1.375rem, 1.1rem + 1vw, var(--fs-25));
+  white-space: nowrap;
   line-height: 1.05;
 }
 
 .lead dd {
-  font-size: var(--fs-49);
+  font-size: clamp(2.25rem, 1.6rem + 2.6vw, var(--fs-49));
   color: var(--emerald-strong);
   letter-spacing: -0.02em;
 }
