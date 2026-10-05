@@ -322,7 +322,7 @@ On first load of any page: read `utm_*`, store in `sessionStorage` (first touch 
 1. **Hero:** title, subtitle, primary button "Start the calculator", proof above the fold (100+ founders · 93% at 12 months · 4.9 rating), the animated week grid.
 2. **The problem:** the six pains with Pareto's percentages; line "Recognize three or more? It's not a productivity problem. It's a structural one."
 3. **What's inside:** hours you can hand off (range) · what they cost you · your task map · your 90-day handoff plan · optional calendar X-ray · downloadable PDF.
-4. **Who it's for:** founders and owners doing $500K+ who are the bottleneck; 3 persona snippets in client words.
+4. **Who it's for:** founders and owners doing $500K+ who are the bottleneck; 3 personas, each a real client quote (Second Brain) + one plain line on who that founder is: "I'm the bottleneck in my own company." · "I've had three different executive assistants before, and I thought it was me." · "I don't have time to train someone right now."
 5. **How it works:** 1 pick your tasks · 2 (optional) add your calendar · 3 get your report.
 6. **Proof:** 3–4 Wall of Love quotes verbatim + Pareto numbers.
 7. **Why trust the math:** "Every formula is tested. See the method." (link to a short method section on /report).
@@ -341,7 +341,7 @@ Headline: "Your report is on its way. Let's match you with a Right Hand who can 
 Day 8 thank-you anatomy: **confirmation** ("Your report is in your inbox in about 2 minutes") · **next steps** (open report, try the first 2 quick wins this week) · **support** (reply to the email) · **objection handling** (short "When does a Right Hand make sense?" + link to paretotalent.com) · view report button.
 
 ### /privacy
-Short and plain: the calendar is processed in the browser and never uploaded; task estimates live in the browser tab; the report link carries first name, rate and task estimates only; form data goes to Pareto Talent's CRM; how to unsubscribe; contact email (placeholder `PRIVACY_CONTACT_EMAIL` in `src/data/pageCopy.ts`, replace before launch). Linked from the footer on every page; the HighLevel form's privacy link points here.
+Short and plain: the calendar is processed in the browser and never uploaded; task estimates live in the browser tab; the report link carries first name, rate and task estimates only; form data goes to Pareto Talent's CRM; how to unsubscribe; contact email franallende2000@gmail.com (`PRIVACY_CONTACT_EMAIL` in `src/data/pageCopy.ts`, shown as a mailto link). Linked from the footer on every page; the HighLevel form's privacy link points here.
 
 ### Links between pages
 Report links in storage and emails are absolute (`VITE_SITE_URL`), but in-app links use the path only (`/report?d=…`) so they also work on Vercel preview deploys.
@@ -406,3 +406,9 @@ public/ og-image.png favicon.svg
 22. New `/privacy` page, linked from every footer.
 23. Report charts use the brand pair (emerald = handed off, amber = stays with you), validated for color-vision deficiency; because contrast vs the surface is under 3:1, each chart has a legend, a direct label and a "See the numbers" table. One y-axis only: the 12-month chart plots hours; dollars are in the end label, tooltip and table.
 24. The PDF uses built-in Helvetica (selectable text, no font download), 2 pages.
+
+**2026-10-04** (preview feedback)
+25. Booking calendar ID set (`VITE_GHL_CALENDAR_ID`, `.env` + Vercel Production/Preview); `/book` embeds it, prefilled with the first name.
+26. "Who it's for" uses real client quotes from the Second Brain instead of drafted descriptions.
+27. FAQ "What's a Right Hand?" uses Pareto's own framing (provided by Francisco). Open item: it says "top 1% of 1,000+ applicants", while §6 lists "1 in 1,000 applicants placed"; reconcile the two figures before launch.
+28. Privacy contact: franallende2000@gmail.com.
