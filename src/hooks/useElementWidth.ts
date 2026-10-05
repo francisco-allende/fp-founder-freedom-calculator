@@ -8,7 +8,8 @@ export function useElementWidth<T extends HTMLElement>(fallback = 640) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const measure = () => setWidth(el.getBoundingClientRect().width || fallback);
+    // offsetWidth is the layout width, unaffected by CSS transforms (the landing preview is scaled).
+    const measure = () => setWidth(el.offsetWidth || fallback);
     measure();
     if (typeof ResizeObserver === 'undefined') return;
     const ro = new ResizeObserver(measure);

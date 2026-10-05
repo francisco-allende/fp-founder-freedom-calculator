@@ -1,0 +1,112 @@
+.card {
+  display: grid;
+  gap: var(--space-4);
+  padding: clamp(var(--space-4), 3vw, var(--space-6));
+  border-radius: var(--radius-control);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  justify-items: start;
+}
+
+.control {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: var(--space-3);
+  width: 100%;
+}
+
+.control input {
+  grid-column: 1 / -1;
+  accent-color: var(--emerald);
+}
+
+.label {
+  font-weight: 600;
+}
+
+.value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-25);
+  font-variant-numeric: tabular-nums;
+  color: var(--emerald);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.day {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding-bottom: var(--space-1);
+}
+
+.free,
+.leak,
+.handed {
+  height: clamp(0.75rem, 1.6vw, 1.15rem);
+  border-radius: var(--radius-cell);
+  transition: background-color 160ms ease-out;
+}
+
+.free {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.leak {
+  background: var(--amber);
+}
+
+.handed {
+  background: var(--emerald);
+}
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  font-size: var(--fs-14);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatchLeak,
+.swatchHanded {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.swatchLeak {
+  background: var(--amber);
+}
+
+.swatchHanded {
+  background: var(--emerald);
+}
+
+.caption,
+.assumption {
+  font-size: var(--fs-14);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.result {
+  font-size: var(--fs-20);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}

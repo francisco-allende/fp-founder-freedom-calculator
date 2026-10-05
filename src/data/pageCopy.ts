@@ -8,12 +8,25 @@ export const NAV = {
 } as const;
 
 export const LANDING = {
+  hero: {
+    cta: 'Do the full calculation',
+    slider: 'Hours on email per week',
+    legend: 'Each square is 15 minutes of email.',
+    onPlate: 'Still on your plate',
+    handedOff: 'A Right Hand could take',
+    result: (hours: string, money: string) => `A Right Hand could take about ${hours} of it, worth ${money} a month.`,
+    assumption: 'Assumes 70% of email is delegable and $200 an hour, the paretotalent.com default. Change both in the full calculation.',
+  },
   problem: {
     heading: 'Where founders get stuck',
     close: "Recognize three or more? It's not a productivity problem. It's a structural one.",
+    // Official Pareto Talent data (design rule 1). Never a placeholder.
+    source: 'Source: Pareto Talent, from 1,500+ founder calls.',
   },
   inside: {
     heading: "What's inside your report",
+    previewLabel: 'A sample report, rendered by the same code that builds yours.',
+    previewBadge: 'Sample report',
     items: [
       { title: 'Hours you can hand off', text: 'A realistic range, task by task, not one big guess.' },
       { title: 'What they cost you', text: 'Your hours times your rate, per month and per year, with the math shown.' },
@@ -47,6 +60,7 @@ export const LANDING = {
   },
   how: {
     heading: 'How it works',
+    areasLabel: 'Seven areas, one task at a time',
     steps: [
       { title: 'Pick your tasks', text: 'Start from the tasks founders carry most and adjust the hours to your week.' },
       { title: 'Add your calendar (optional)', text: 'Drop in a calendar export for a sharper result. It never leaves your browser.' },
@@ -56,7 +70,10 @@ export const LANDING = {
   proof: { heading: 'Founders who handed it off' },
   trust: {
     heading: 'Why trust the math',
-    text: 'Every formula is tested.',
+    // The count comes from the test run that gates every build (see vite.config.ts).
+    badge: (tests: number | null) =>
+      tests ? `Every formula is tested · ${tests} automated tests` : 'Every formula is tested',
+    text: 'Most ROI calculators multiply two guesses. This one works task by task, can read your real calendar, and shows its math.',
     link: 'See the method',
   },
   faq: {

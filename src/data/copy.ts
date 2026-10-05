@@ -21,6 +21,16 @@ export const PROOF = {
   hoursSaved: 'Founders save 10–15 hrs/week in month 1',
 } as const;
 
+/** The same official numbers split for the stats grid: big figure + short label, nothing truncated. */
+export const PROOF_STATS = [
+  { value: '100+', label: 'founders served' },
+  { value: '93%', label: 'still together at 12 months' },
+  { value: '4.9', label: 'Google rating' },
+  { value: '1 in 1,000', label: 'applicants placed' },
+  { value: '3', label: 'hand-picked candidates in 24 h' },
+  { value: '250+', label: 'Right Hands in the network' },
+] as const;
+
 export const PRICING = {
   annualPlan: 'Annual plan $36,000/yr ($3,000/mo) + $3,000 placement',
   year1AllIn: 'Year 1 all-in: $39,000 annual · $43,000 quarterly · $46,200 monthly (each includes the $3,000 placement fee)',

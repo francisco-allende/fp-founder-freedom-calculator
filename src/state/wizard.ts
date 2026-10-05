@@ -262,3 +262,12 @@ export function useWizard() {
   useEffect(() => writeJSON(STORAGE_KEYS.wizard, state), [state]);
   return [state, dispatch] as const;
 }
+
+/**
+ * From the landing mini-calculator: start a fresh run with the email hours already set.
+ * A run in progress is never overwritten.
+ */
+export function seedNewRun(inboxHours: number): void {
+  if (readJSON(STORAGE_KEYS.wizard, isWizardState)) return;
+  writeJSON(STORAGE_KEYS.wizard, wizardReducer(initialState(), { type: 'setTaskHours', id: 'inbox', hours: inboxHours }));
+}

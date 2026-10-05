@@ -67,8 +67,9 @@ describe('/report', () => {
   it('rebuilds the report from ?d=', () => {
     at(`/report?d=${d}`, <Report />);
     expect(screen.getByRole('heading', { level: 1, name: "Fran's Founder Freedom report" })).toBeInTheDocument();
-    expect(screen.getByText('11.2–16.1')).toBeInTheDocument();
-    expect(screen.getByText('$9,662–$13,803')).toBeInTheDocument();
+    expect(screen.getByText('11–16')).toBeInTheDocument();
+    expect(screen.getByText('$9.7K–$13.8K')).toBeInTheDocument();
+    expect(screen.getByText('$116K–$166K')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Download PDF' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Your week today vs with a Right Hand' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Your calendar X-ray' })).toBeInTheDocument();
@@ -208,8 +209,54 @@ describe('/privacy and footer', () => {
   it('landing has the hero CTA, proof and the six pains with 60%+', () => {
     at('/', <Landing />);
     expect(screen.getByRole('heading', { level: 1, name: 'The Founder Freedom Calculator' })).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: 'Start the calculator' })[0]).toHaveAttribute('href', '/calculator');
+    expect(screen.getByRole('button', { name: 'Do the full calculation' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Do the full calculation' })).toHaveAttribute('href', '/calculator');
     expect(screen.getByText('60%+')).toBeInTheDocument();
+    expect(screen.getByText('Source: Pareto Talent, from 1,500+ founder calls.')).toBeInTheDocument();
+  });
+
+  it('hero mini-calculator: the slider updates the result, and the CTA seeds a fresh run', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/calculator" element={<Calculator />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    const slider = screen.getByLabelText('Hours on email per week');
+    expect(slider).toHaveValue('5');
+    fireEvent.change(slider, { target: { value: '8' } });
+    // 8 h × 70% = 5.6 h; 5.6 × $200 × 4.3 = $4,816 a month → $4.8K (announced after the slider settles).
+    const settled = await screen.findAllByText('A Right Hand could take about 5.6 h of it, worth $4.8K a month.', {}, { timeout: 3000 });
+    expect(settled.length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Do the full calculation' }));
+    expect(screen.getByRole('heading', { level: 1, name: 'First, a little about you' })).toBeInTheDocument();
+    expect(JSON.parse(window.sessionStorage.getItem(STORAGE_KEYS.wizard)!).tasks.inbox.hours).toBe(8);
+  });
+
+  it('the hero CTA never overwrites a run in progress', async () => {
+    const { seedNewRun } = await import('../state/wizard');
+    window.sessionStorage.setItem(STORAGE_KEYS.wizard, JSON.stringify({ ...JSON.parse(JSON.stringify((await import('../state/wizard')).initialState())), step: 3 }));
+    seedNewRun(9);
+    expect(JSON.parse(window.sessionStorage.getItem(STORAGE_KEYS.wizard)!)).toMatchObject({ step: 3, tasks: { inbox: { hours: 5 } } });
+  });
+
+  it('testimonials use monogram initials (no photos) and the stats grid is complete', () => {
+    at('/', <Landing />);
+    expect(screen.getByText('JD')).toBeInTheDocument(); // Justin Donald
+    expect(screen.getByText('BR')).toBeInTheDocument(); // Bo Royal
+    expect(document.querySelectorAll('img')).toHaveLength(0);
+    expect(screen.getByText('hand-picked candidates in 24 h')).toBeInTheDocument();
+    expect(screen.getByText('1 in 1,000')).toBeInTheDocument();
+  });
+
+  it('"Why trust the math" shows the tested-formulas badge and links to the method', () => {
+    at('/', <Landing />);
+    expect(screen.getByText(/^Every formula is tested( · \d+ automated tests)?$/)).toBeInTheDocument();
+    expect(screen.getByText(/Most ROI calculators multiply two guesses/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'See the method' })).toHaveAttribute('href', '/report#method');
     expect(screen.getByRole('link', { name: 'See the method' })).toHaveAttribute('href', '/report#method');
   });
 });
