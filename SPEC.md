@@ -419,3 +419,8 @@ public/ og-image.png favicon.svg
 31. form_embed.js only wires up iframes present when it runs, so it is (re)run after each HighLevel iframe mounts.
 32. Booking and form iframes have no fixed height; form_embed.js auto-resizes them. Inside our page the booking widget reported a height of 0 in testing, so each iframe has a rem min-height sized to the widget's tallest state (booking: 90rem phones, 60rem from 40rem up; form: 60rem / 50rem) so the confirm/submit button is always reachable.
 33. Responsive rules: rem breakpoints (37.5 / 40 / 45 / 60rem), fluid containers, no fixed pixel layout widths; charts size their axes from their own width; data tables use fixed layout with wrapping headers. Audited at 375, 768, 1366, 1440, 1536 and 1920 px: no horizontal scroll, nothing clipped.
+
+**2026-10-05** (run lifecycle)
+34. Hidden fields confirmed arriving in HighLevel. Test in a fresh private window every time: HighLevel re-sends saved contact details from earlier submissions, which can mix old values into a new run.
+35. Run lifecycle: `/next` clears all wizard state before redirecting and keeps only `{qualified, tier, reportUrl, firstName}` for `/book` and `/thanks` (top tasks and quick wins are derived from the report link). "Start a new calculation" on `/book` and `/thanks` clears that too and opens a clean step 1. A run left half-way still restores on refresh. UTMs (first touch) survive both.
+36. Qualification and every hidden field are recomputed from the current answers each time the gate renders and re-stored; nothing is reused from an earlier run.
