@@ -375,6 +375,23 @@ public/ og-image.png favicon.svg
 
 ---
 
+## 12b. Design pass rules (2026-10-05, apply to every design round and win over round prompts)
+
+Workflow: 4 rounds, sent one at a time. Each round is finished, committed and deployed to production before the next.
+
+1. **Pain stats source.** The six founder pain stats (80% / 70% / 60%+ / 50% / 40% / 30%) are official Pareto Talent data; numbers stay exactly as is. A visible source line sits with them: "Source: Pareto Talent, from 1,500+ founder calls." Never a placeholder or invented source.
+2. **Calendar name.** "FP | Francisco Allende | Matching Call" is a required naming convention (and lives inside HighLevel's iframe). Never renamed.
+3. **Testimonials.** No photo placeholders: monogram initials in brand colors (forest/emerald), name and company as published, quotes verbatim.
+4. **Step 3 buttons.** "Add my calendar for a sharper result" is the primary button; "Skip, I'm done" is a clear secondary button (not a link). Third option: "Try it with a sample calendar" loads a bundled demo .ics (realistic founder week: recurring syncs, client calls, a few personal events) and shows the full X-ray with a "Sample data" badge. Sample data is never sent to HighLevel or mixed into the user's results unless they explicitly accept it.
+5. **/book and /thanks.** Messages stay different (qualified vs not qualified). Only the visual pattern is unified: success icon, same layout, same button styles.
+6. **Landing additions.**
+   a. Hero: a live mini-calculator with one slider ("Hours on email per week") that fills the week grid in real time, plus the CTA "Do the full calculation". This is the page's single orchestrated motion (it replaces the scroll-driven grid).
+   b. Section "Why trust the math": badge "Every formula is tested · N automated tests", one line that typical ROI calculators multiply two guesses while this one works task by task with your real calendar, and a link to the method. Competitors are never named.
+7. **Rounding (every page and the PDF).** Hours in ranges as whole numbers; money compact: $9.7K–$13.8K, $116K–$166K. Task-level rows may keep one decimal.
+8. **Animation discipline.** Count-ups only when the user changes something, plus one staged reveal on the results page. No scroll-triggered fade-ins. `prefers-reduced-motion` respected everywhere.
+9. **Copy and icons.** All §6 copy rules still apply (no em dashes, no "→" on buttons, official numbers only). Icons: `lucide-react`.
+10. **Booking fallback.** If the calendar embed still feels odd after round 4, add under it: "Prefer a full-screen scheduler? Open it here" linking to https://api.leadconnectorhq.com/widget/bookings/fp-francisco-allende-matching (new tab).
+
 ## 13. Decisions log
 
 **2026-10-03** (resolving gaps found in the first read of this spec)
