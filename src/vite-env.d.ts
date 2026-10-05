@@ -9,3 +9,6 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/** Passed tests from the run that gated this build (vite.config.ts), or null in dev without stats. */
+declare const __TEST_COUNT__: number | null;
