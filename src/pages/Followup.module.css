@@ -81,3 +81,67 @@
   flex-wrap: wrap;
   gap: var(--space-3);
 }
+
+/* Content as cards (shared by /book and /thanks). */
+.card {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  width: 100%;
+  padding: var(--space-5);
+  background: var(--white);
+  border-radius: var(--radius-control);
+}
+
+.card h2 {
+  font-size: var(--fs-20);
+}
+
+.cards {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* Quick wins as icon cards. */
+.winCards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+@media (min-width: 37.5rem) {
+  .winCards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.winCard {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+}
+
+.winIcon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--mist);
+}
+
+.winCard strong {
+  display: block;
+}
+
+.calendarCard {
+  scroll-margin-top: var(--space-4);
+  padding-inline: clamp(var(--space-2), 2vw, var(--space-5));
+}
