@@ -14,7 +14,10 @@ export function PageShell({ children, wide = false }: { children: ReactNode; wid
           </Link>
         </div>
       </header>
-      <main className={`${styles.inner} ${styles.main} ${wide ? styles.wide : ''}`}>{children}</main>
+      {/* Same 72rem container and left edge as the header; the reading column is narrower but left-aligned. */}
+      <main className={styles.inner}>
+        <div className={`${styles.main} ${wide ? styles.wide : ''}`}>{children}</div>
+      </main>
       <Footer />
     </>
   );
