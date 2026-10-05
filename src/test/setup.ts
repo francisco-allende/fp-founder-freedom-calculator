@@ -11,6 +11,7 @@ if (typeof window !== 'undefined') {
 
   // jsdom does not implement scrolling.
   window.scrollTo = () => {};
+  Element.prototype.scrollIntoView ??= function scrollIntoView() {};
 
   // Recharts' ResponsiveContainer needs ResizeObserver, which jsdom lacks.
   class ResizeObserverStub {

@@ -1,43 +1,73 @@
+/* Results: weekly hours is the hero card; month and year are secondary cards. */
 .numbers {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-3);
   margin: 0;
 }
 
 @media (min-width: 45rem) {
   .numbers {
-    grid-template-columns: 1.3fr 1fr 1fr;
-    align-items: end;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lead {
+    grid-column: 1 / -1;
   }
 }
 
-.numbers div {
-  min-width: 0;
+.figure {
   display: flex;
   flex-direction: column-reverse;
+  justify-content: flex-end;
   gap: var(--space-1);
+  min-width: 0;
+  padding: var(--space-4) var(--space-5);
+  background: var(--white);
+  border-radius: var(--radius-control);
+  /* Staged reveal: each card fades up when its turn comes (instant with reduced motion). */
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
 }
 
-.numbers dt {
+.shown {
+  opacity: 1;
+  transform: none;
+}
+
+.figure dt {
   font-size: var(--fs-14);
   color: var(--slate);
 }
 
-.numbers dd {
+.figure dd {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.375rem, 1.1rem + 1vw, var(--fs-25));
-  white-space: nowrap;
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, var(--fs-31));
   line-height: 1.05;
+  white-space: nowrap;
+}
+
+.lead {
+  background: var(--forest);
+  padding: var(--space-5);
+}
+
+.lead dt {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--fs-16);
 }
 
 .lead dd {
-  font-size: clamp(2.25rem, 1.6rem + 2.6vw, var(--fs-49));
-  color: var(--emerald-strong);
+  font-size: clamp(2.75rem, 1.8rem + 4vw, var(--fs-61));
+  color: var(--emerald);
   letter-spacing: -0.02em;
 }
 
+/* Locked preview of the plan and task map. */
 .preview {
   position: relative;
   overflow: hidden;
@@ -65,12 +95,51 @@
   padding-left: 1.2rem;
 }
 
-.overlay {
+/* The whole card is one button that takes the visitor to the form. */
+.unlock {
   position: absolute;
-  inset: auto 0 0 0;
-  padding: var(--space-4) var(--space-5);
-  background: linear-gradient(transparent, var(--white) 40%);
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: none;
+  background: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.9));
+  color: var(--ink);
+  text-align: center;
+  cursor: pointer;
+  font: inherit;
+}
+
+.unlock:hover .unlockAction {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.lock {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--forest);
+  color: var(--emerald);
+}
+
+.unlockText {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-20);
+  max-width: 26ch;
+}
+
+.unlockAction {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   font-weight: 600;
+  color: var(--emerald-strong);
 }
 
 .gate {
@@ -80,6 +149,7 @@
   margin-inline: calc(var(--gutter) * -1);
   background: var(--forest);
   color: var(--white);
+  scroll-margin-top: var(--space-4);
 }
 
 @media (min-width: 45rem) {

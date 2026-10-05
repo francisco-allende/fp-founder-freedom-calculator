@@ -1,4 +1,7 @@
-import { useMemo } from 'react';
+import { ArrowDown, Lock } from 'lucide-react';
+import { useMemo, useRef } from 'react';
+import { prefersReducedMotion } from '../../hooks/useAnimatedNumber';
+import { useStagedCountUp } from '../../hooks/useStagedCountUp';
 import { Button } from '../../components/Button/Button';
 import { GateForm } from '../../components/GateForm/GateForm';
 import { StepHeading } from '../../components/StepHeading/StepHeading';
@@ -18,11 +21,40 @@ export function siteOrigin(): string {
   return (import.meta.env.VITE_SITE_URL || window.location.origin).replace(/\/+$/, '');
 }
 
+interface FigureProps {
+  label: string;
+  low: number;
+  high: number;
+  delay: number;
+  format: (low: number, high: number) => string;
+  className?: string;
+}
+
+/** A results figure that appears and counts up once (staged reveal); screen readers get the final value. */
+function Figure({ label, low, high, delay, format, className }: FigureProps) {
+  const a = useStagedCountUp(low, delay);
+  const b = useStagedCountUp(high, delay);
+  return (
+    <div className={[local.figure, className, a.shown ? local.shown : ''].filter(Boolean).join(' ')}>
+      <dt>{label}</dt>
+      <dd>
+        <span aria-hidden="true">{format(a.value, b.value)}</span>
+        <span className="visually-hidden">{format(low, high)}</span>
+      </dd>
+    </div>
+  );
+}
+
 export function StepPreview({ state, tasks, results, go, focusHeading }: StepProps) {
   const p = WIZARD.preview;
   const { about, calendar } = state;
 
   const roadmap = useMemo(() => buildRoadmap(tasks), [tasks]);
+  const gateRef = useRef<HTMLElement>(null);
+  const toForm = () => {
+    gateRef.current?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+    gateRef.current?.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
+  };
   const map = useMemo(() => taskMap(tasks), [tasks]);
 
   const prefill = useMemo(
@@ -63,27 +95,13 @@ export function StepPreview({ state, tasks, results, go, focusHeading }: StepPro
       <StepHeading focus={focusHeading}>{p.heading(about.firstName)}</StepHeading>
 
       <dl className={local.numbers}>
-        <div className={local.lead}>
-          <dt>{p.hours}</dt>
-          <dd className="num">
-            {hoursRange(results.hours.low, results.hours.realistic)}
-          </dd>
-        </div>
-        <div>
-          <dt>{p.month}</dt>
-          <dd className="num">
-            {moneyRange(results.monthly.low, results.monthly.realistic)}
-          </dd>
-        </div>
-        <div>
-          <dt>{p.year}</dt>
-          <dd className="num">
-            {moneyRange(results.annual.low, results.annual.realistic)}
-          </dd>
-        </div>
+        <Figure className={local.lead} delay={0} label={p.hours} low={results.hours.low} high={results.hours.realistic} format={hoursRange} />
+        <Figure delay={450} label={p.month} low={results.monthly.low} high={results.monthly.realistic} format={moneyRange} />
+        <Figure delay={900} label={p.year} low={results.annual.low} high={results.annual.realistic} format={moneyRange} />
       </dl>
       <p className={styles.footnote}>{FOOTNOTE}</p>
 
+      {/* Locked preview: the whole card takes the visitor to the form. */}
       <section className={local.preview} aria-label={p.blurredLabel}>
         <div className={local.blur} aria-hidden="true">
           <div>
@@ -115,11 +133,22 @@ export function StepPreview({ state, tasks, results, go, focusHeading }: StepPro
             </ul>
           </div>
         </div>
-        <p className={local.overlay}>{p.blurredLabel}</p>
+        <button type="button" className={local.unlock} onClick={toForm}>
+          <span className={local.lock} aria-hidden="true">
+            <Lock size={22} strokeWidth={1.75} />
+          </span>
+          <span className={local.unlockText}>{p.locked}</span>
+          <span className={local.unlockAction}>
+            {p.lockedAction}
+            <ArrowDown size={16} strokeWidth={2} aria-hidden="true" />
+          </span>
+        </button>
       </section>
 
-      <section className={local.gate} aria-labelledby="gate-heading">
-        <h2 id="gate-heading">{p.gate}</h2>
+      <section className={local.gate} aria-labelledby="gate-heading" ref={gateRef}>
+        <h2 id="gate-heading" tabIndex={-1}>
+          {p.gate}
+        </h2>
         <GateForm
           formId={import.meta.env.VITE_GHL_FORM_ID}
           prefill={prefill}
