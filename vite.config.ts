@@ -10,6 +10,8 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}'],
     coverage: {
       provider: 'v8',
+      // List every engine file, including the ones at 100%.
+      reporter: [['text', { skipFull: false }], 'html'],
       include: ['src/engine/**/*.ts'],
       exclude: ['src/engine/__tests__/**', 'src/engine/types.ts'],
     },
