@@ -91,7 +91,7 @@ Progress bar with 4 steps. State in a reducer; persisted to `sessionStorage` so 
 - Explainer: how to export from Google Calendar (Settings → Import & export → Export) and Outlook, in 3 short steps with screenshots placeholders.
 - File input accepts `.ics` and `.zip` (Google exports a zip; unzip in-browser with `fflate` if zip).
 - Privacy line, visible: "Your calendar is read inside this browser tab. Nothing is uploaded or stored."
-- Processing rules in §5.3. Output: heatmap + 3 stats, and suggested hours for "Scheduling & rescheduling" and "Meeting prep & follow-ups", which the founder can accept into step 2 with one click.
+- Processing rules in §5.3. Output: heatmap + 3 stats, and three suggested hours for "Scheduling and rescheduling meetings", "Preparing for meetings" and "Follow-ups after calls". The founder accepts each suggestion separately into step 2 with one click.
 
 ### Step 4 — Preview + gate
 - Show **headline numbers fully**: delegable hours/week (range), what that time costs per month and per year, and a blurred preview of the roadmap and task map.
@@ -137,7 +137,12 @@ Rounding only at display time. Money with `Intl.NumberFormat('en-US', {style:'cu
   - `fragmentedHoursPerWeek` (free gaps < 30 min between meetings)
   - `meetingsPerWeek` (avg count of work meetings)
   - `heatmap[7][17]` (Mon–Sun × 17 one-hour slots starting 6:00, 7:00, …, 22:00; minutes booked per slot, averaged, rounded to whole minutes)
-  - Suggested hours: `scheduling = meetingsPerWeek × 10 min` and `prepAndFollowUp = meetingsPerWeek × 15 min` (ESTIMATES, editable)
+  - Suggested hours (ESTIMATES, editable, each accepted separately):
+    - `scheduling = meetingsPerWeek × 10 min` → task `sched`
+    - `prep = meetingsPerWeek × 10 min` (all work meetings) → task `brief`
+    - `followUp = clientSalesMeetingsPerWeek × 10 min` (Client & sales meetings only; internal syncs rarely need a written follow-up) → task `followup`
+  - Focus time: personal events (filtered above) still block focus blocks, because nobody focuses at the dentist. Fragmentation is measured between work meetings only.
+  - The same occurrence (same start, end and title) in more than one exported calendar is counted once.
 - Must run on a 3-year Google export in < 2 s (only expand inside the window).
 
 ### 5.4 Roadmap (`roadmap.ts`)
@@ -173,6 +178,7 @@ Return also `reasons[]` (which rule failed) for internal tags, never shown to th
 ### 5.6 Report state + URL (`reportState.ts`)
 - Minimal JSON: `{v:1, n:firstName, r:rate, t:[[taskId,hours,pct] | [name,hours,pct,"c"],...], c:calendarSummary|null}`.
 - Custom tasks are encoded as `[name,hours,pct,"c"]`; name max 40 chars; HTML tags and control characters are stripped on encode **and** on decode (decoded input is untrusted).
+- Hours are clamped to 0–10 (step 0.25) and pct to 0–100 on encode and decode, for library and custom tasks alike.
 - `lz-string.compressToEncodedURIComponent` → `/report?d=...`. Must stay < 2,000 chars for 25 tasks (test it).
 - If the full URL would exceed 2,000 chars, drop the heatmap and keep only `meetingHoursPerWeek`, `meetingsPerWeek`, `focusBlocksPerWeek`, `fragmentedHoursPerWeek`. Test both paths.
 - No email, no revenue, no raw calendar events in the URL.
@@ -378,3 +384,11 @@ public/ og-image.png favicon.svg
 11. GHL IDs and domain via env vars; "Continue" fallback in the gate built from day one.
 12. CSS modules.
 13. Soft notices in step 2 when task hours exceed weekly hours or 80% of them.
+
+**2026-10-04** (after the engine review)
+14. Calendar suggestions are split by meeting type: "Preparing for meetings" +10 min per work meeting; "Follow-ups after calls" +10 min per Client & sales meeting only; scheduling stays at 10 min per meeting. All three are estimates, accepted one by one (§5.3).
+15. Personal events block focus time (but are excluded from work stats).
+16. Identical occurrences across exported calendars are counted once.
+17. Hours per task are capped at 10 in the report URL, matching the slider (custom tasks included).
+18. `.gitattributes` enforces LF line endings.
+19. Dependencies are pinned to exact versions so CI and Vercel build the same thing.

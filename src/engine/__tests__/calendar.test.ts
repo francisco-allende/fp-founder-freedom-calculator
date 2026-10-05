@@ -66,8 +66,29 @@ describe('test 7: calendar fixture', () => {
   });
 
   it('suggested hours from meeting count (estimates)', () => {
-    expect(s.suggestedHours.scheduling).toBeCloseTo(0.25, 10); // 1.5 × 10 min
-    expect(s.suggestedHours.prepAndFollowUp).toBeCloseTo(0.375, 10); // 1.5 × 15 min
+    expect(s.suggestedHours.scheduling).toBeCloseTo(0.25, 10); // 1.5 meetings/wk × 10 min
+    expect(s.suggestedHours.prep).toBeCloseTo(0.25, 10); // 1.5 meetings/wk × 10 min
+    // Only the client demo is Client & sales (the declined discovery call is dropped):
+    // 0.25 client meetings/wk × 10 min.
+    expect(s.suggestedHours.followUp).toBeCloseTo(0.25 / 6, 10);
+  });
+
+  it('follow-up time scales with client meetings only, prep with every meeting', () => {
+    const ev = (uid: string, title: string, day: number) =>
+      ['BEGIN:VEVENT', `UID:${uid}`, `SUMMARY:${title}`, `DTSTART:202606${day}T100000`, `DTEND:202606${day}T110000`, 'END:VEVENT'].join('\n');
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      ev('a', 'Sales demo', 15),
+      ev('b', 'Prospect discovery', 16),
+      ev('c', 'Team standup', 17),
+      ev('d', 'Weekly sync', 18),
+      'END:VCALENDAR',
+    ].join('\n');
+    const { suggestedHours, meetingsPerWeek } = analyzeCalendar(ics, NOW);
+    expect(meetingsPerWeek).toBe(1); // 4 meetings / 4 weeks
+    expect(suggestedHours.prep).toBeCloseTo(10 / 60, 10); // 1 meeting/wk × 10 min
+    expect(suggestedHours.followUp).toBeCloseTo(5 / 60, 10); // 0.5 client meetings/wk × 10 min
   });
 
   it('the same calendar exported twice is not double counted', () => {

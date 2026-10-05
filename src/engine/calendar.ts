@@ -13,7 +13,8 @@ const WORKDAY_END_HOUR = 18;
 const FOCUS_MIN_MINUTES = 90;
 const FRAGMENT_MAX_MINUTES = 30;
 const SCHEDULING_MIN_PER_MEETING = 10; // ESTIMATE
-const PREP_MIN_PER_MEETING = 15; // ESTIMATE
+const PREP_MIN_PER_MEETING = 10; // ESTIMATE, every work meeting
+const FOLLOW_UP_MIN_PER_CLIENT_MEETING = 10; // ESTIMATE, Client & sales meetings only
 /** Safety valve for pathological RRULEs (e.g. minutely, no end). */
 const MAX_ITERATIONS_PER_EVENT = 50_000;
 
@@ -226,8 +227,11 @@ export function analyzeCalendar(icsTexts: string | string[], now: Date = new Dat
 
   const categoryMinutes = Object.fromEntries(CALENDAR_CATEGORIES.map((c) => [c, 0])) as Record<CalendarCategory, number>;
   const heat = emptyHeatmap();
+  let clientMeetings = 0;
   for (const o of work) {
-    categoryMinutes[categorize(o.title)] += minutesOf(o);
+    const category = categorize(o.title);
+    categoryMinutes[category] += minutesOf(o);
+    if (category === 'Client & sales') clientMeetings++;
     addToHeatmap(heat, o.start, o.end);
   }
 
@@ -283,7 +287,8 @@ export function analyzeCalendar(icsTexts: string | string[], now: Date = new Dat
     heatmap: heat.map((row) => row.map((m) => Math.round(perWeek(m)))),
     suggestedHours: {
       scheduling: (meetingsPerWeek * SCHEDULING_MIN_PER_MEETING) / 60,
-      prepAndFollowUp: (meetingsPerWeek * PREP_MIN_PER_MEETING) / 60,
+      prep: (meetingsPerWeek * PREP_MIN_PER_MEETING) / 60,
+      followUp: (perWeek(clientMeetings) * FOLLOW_UP_MIN_PER_CLIENT_MEETING) / 60,
     },
   };
 }

@@ -66,7 +66,11 @@ export interface CalendarSummary {
   categoryHoursPerWeek: Record<CalendarCategory, number>;
   /** [7 days Mon–Sun][17 slots starting 6:00…22:00], whole minutes booked per slot. */
   heatmap: number[][];
-  suggestedHours: { scheduling: number; prepAndFollowUp: number };
+  /**
+   * ESTIMATES the founder can accept one by one into step 2:
+   * scheduling → "sched", prep → "brief", followUp → "followup".
+   */
+  suggestedHours: { scheduling: number; prep: number; followUp: number };
 }
 
 /** The slice of the calendar summary that travels in the report URL (SPEC §5.6). */
