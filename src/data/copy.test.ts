@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as copy from './copy';
+import * as pageCopy from './pageCopy';
+import { METHOD_ITEMS } from '../report/method';
 import { TASKS } from './tasks';
 
 /** Every string reachable from a value, including the output of copy functions. */
@@ -12,7 +14,7 @@ function strings(value: unknown): string[] {
 }
 
 describe('public copy rules (SPEC §6)', () => {
-  const all = [...strings(copy), ...TASKS.flatMap((t) => [t.name, t.tip])];
+  const all = [...strings(copy), ...strings(pageCopy), ...strings(METHOD_ITEMS), ...TASKS.flatMap((t) => [t.name, t.tip])];
 
   it('has no em dashes', () => {
     expect(all.filter((s) => s.includes('—'))).toEqual([]);
