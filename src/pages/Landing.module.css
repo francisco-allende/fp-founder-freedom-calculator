@@ -166,6 +166,17 @@
   border-left: 3px solid var(--amber);
 }
 
+.personaQuote {
+  margin: 0;
+  font-size: var(--fs-20);
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.personaWho {
+  color: var(--slate);
+}
+
 .steps {
   list-style: none;
   margin: 0;

@@ -15,7 +15,9 @@ export default function Privacy() {
           <p>{s.text}</p>
         </section>
       ))}
-      <p>{PRIVACY.contact(PRIVACY_CONTACT_EMAIL)}</p>
+      <p>
+        {PRIVACY.contactLead} <a href={`mailto:${PRIVACY_CONTACT_EMAIL}`}>{PRIVACY_CONTACT_EMAIL}</a>.
+      </p>
     </PageShell>
   );
 }

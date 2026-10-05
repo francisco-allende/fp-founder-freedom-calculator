@@ -25,12 +25,22 @@ export const LANDING = {
   who: {
     heading: 'Who it is for',
     intro: 'Founders and owners doing $500K+ a year who have become the bottleneck in their own business.',
+    // Real client wording (Second Brain): a short quote + one plain line on who that founder is.
     personas: [
-      { title: 'The operator', text: 'Every decision still crosses your desk, and your inbox is where your week goes to die.' },
-      { title: 'The rainmaker', text: 'You close the deals, then lose the evening to proposals, follow-ups and the CRM.' },
       {
-        title: 'The burned',
-        text: 'You tried a VA once. You spent more time explaining than doing, and went back to doing it yourself.',
+        title: 'The bottleneck',
+        quote: "I'm the bottleneck in my own company.",
+        text: 'The founder every decision, approval and email still has to go through.',
+      },
+      {
+        title: 'Burned before',
+        quote: "I've had three different executive assistants before, and I thought it was me.",
+        text: 'The founder who tried delegating, watched it fail, and took the work back.',
+      },
+      {
+        title: 'No time to train',
+        quote: "I don't have time to train someone right now.",
+        text: 'The founder too busy to hand anything off, which is exactly why the week never gets lighter.',
       },
     ],
   },
@@ -62,7 +72,8 @@ export const LANDING = {
       },
       {
         q: "What's a Right Hand?",
-        a: 'A full-time executive assistant hand-picked and trained by Pareto Talent to run your inbox, calendar, follow-ups and projects, so your hours go to the work only you can do.',
+        // Pareto's own framing (provided by Francisco, 2026-10-04).
+        a: 'A full-time, dedicated remote operator who owns outcomes, not just tasks. Pareto Right Hands are the top 1% of 1,000+ applicants, trained 40+ hours on AI tools, based in Latin America, fluent in English, and work your hours, exclusively for you.',
       },
     ],
   },
@@ -157,8 +168,7 @@ export const THANKS = {
   viewReport: 'View my report',
 } as const;
 
-/** Replace before launch. */
-export const PRIVACY_CONTACT_EMAIL = '[contact email]';
+export const PRIVACY_CONTACT_EMAIL = 'franallende2000@gmail.com';
 
 export const PRIVACY = {
   heading: 'Privacy',
@@ -181,5 +191,5 @@ export const PRIVACY = {
       text: 'Every email has an unsubscribe link. You can also reply to any email and ask us to stop, or ask us to delete your details.',
     },
   ],
-  contact: (email: string) => `Questions about your data? Write to ${email}.`,
+  contactLead: 'Questions about your data? Write to',
 } as const;

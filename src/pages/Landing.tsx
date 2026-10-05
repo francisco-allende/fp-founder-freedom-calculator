@@ -69,7 +69,10 @@ export default function Landing() {
               {LANDING.who.personas.map((p) => (
                 <li key={p.title}>
                   <h3>{p.title}</h3>
-                  <p>{p.text}</p>
+                  <blockquote className={styles.personaQuote}>
+                    <p>“{p.quote}”</p>
+                  </blockquote>
+                  <p className={styles.personaWho}>{p.text}</p>
                 </li>
               ))}
             </ul>

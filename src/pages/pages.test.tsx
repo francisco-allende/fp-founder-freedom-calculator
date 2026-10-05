@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { customTask, defaultTasks, TASKS_BY_ID, taskFromDef } from '../data/tasks';
 import { encodeReport } from '../engine/reportState';
 import type { ReportState } from '../engine/types';
@@ -116,6 +116,20 @@ describe('/book', () => {
     expect(screen.getByRole('link', { name: 'View my report now' })).toHaveAttribute('href', `/report?d=${d}`);
   });
 
+  it('with a calendar id: embeds the Matching Call booking widget, prefilled with the first name', () => {
+    vi.stubEnv('VITE_GHL_CALENDAR_ID', 'WjMplcLNiuDvJMlWqQQb');
+    try {
+      storeQualification();
+      at('/book', <Book />);
+      const frame = screen.getByTitle('FP | Francisco Allende | Matching Call');
+      expect(frame).toHaveAttribute('src', 'https://api.leadconnectorhq.com/widget/booking/WjMplcLNiuDvJMlWqQQb?first_name=Fran');
+      expect(document.querySelector('script[src="https://link.msgsndr.com/js/form_embed.js"]')).not.toBeNull();
+      expect(screen.queryByText(/booking calendar is coming soon/)).toBeNull();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it('without a calendar id it says the calendar is coming', () => {
     at('/book', <Book />);
     expect(screen.getByText(/booking calendar is coming soon/)).toBeInTheDocument();
@@ -146,6 +160,14 @@ describe('/privacy and footer', () => {
     expect(screen.getByText(/never uploaded, sent or stored/)).toBeInTheDocument();
     expect(screen.getByText(/Pareto Talent’s CRM/)).toBeInTheDocument();
     expect(screen.getByText(/unsubscribe link/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'franallende2000@gmail.com' })).toHaveAttribute('href', 'mailto:franallende2000@gmail.com');
+  });
+
+  it('landing personas are client quotes, and the FAQ uses Pareto framing', () => {
+    at('/', <Landing />);
+    expect(screen.getByText(/I'm the bottleneck in my own company./)).toBeInTheDocument();
+    expect(screen.getByText(/I don't have time to train someone right now/)).toBeInTheDocument();
+    expect(screen.getByText(/owns outcomes, not just tasks/)).toBeInTheDocument();
   });
 
   it('the landing footer links to /privacy and paretotalent.com', () => {
