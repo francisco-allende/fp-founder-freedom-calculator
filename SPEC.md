@@ -52,6 +52,7 @@ A free web app for founders that answers one question in about 7 minutes:
 /book        Qualified: report link + embedded booking calendar
 /thanks      Not qualified: confirmation + report link + next steps
 /report      Shareable report rebuilt from ?d=<compressed state>
+/privacy     Plain privacy page (linked from every footer and from the HighLevel form)
 ```
 
 ```
@@ -339,6 +340,12 @@ Headline: "Your report is on its way. Let's match you with a Right Hand who can 
 ### /thanks (not qualified)
 Day 8 thank-you anatomy: **confirmation** ("Your report is in your inbox in about 2 minutes") · **next steps** (open report, try the first 2 quick wins this week) · **support** (reply to the email) · **objection handling** (short "When does a Right Hand make sense?" + link to paretotalent.com) · view report button.
 
+### /privacy
+Short and plain: the calendar is processed in the browser and never uploaded; task estimates live in the browser tab; the report link carries first name, rate and task estimates only; form data goes to Pareto Talent's CRM; how to unsubscribe; contact email (placeholder `PRIVACY_CONTACT_EMAIL` in `src/data/pageCopy.ts`, replace before launch). Linked from the footer on every page; the HighLevel form's privacy link points here.
+
+### Links between pages
+Report links in storage and emails are absolute (`VITE_SITE_URL`), but in-app links use the path only (`/report?d=…`) so they also work on Vercel preview deploys.
+
 ---
 
 ## 11. Repo layout
@@ -392,3 +399,10 @@ public/ og-image.png favicon.svg
 17. Hours per task are capped at 10 in the report URL, matching the slider (custom tasks included).
 18. `.gitattributes` enforces LF line endings.
 19. Dependencies are pinned to exact versions so CI and Vercel build the same thing.
+
+**2026-10-04** (HighLevel confirmed, pages)
+20. HighLevel query keys confirmed: `fft_role`, `fft_revenue`, `fft_timeline`, `first_name`, `last_name`, `email`, `phone`, plus the 13 hidden fields by field name. A test asserts the step-1 option strings are byte-identical to the HighLevel dropdowns (en dash U+2013).
+21. Production: https://fp-founder-freedom-calculator.vercel.app. `VITE_SITE_URL` and `VITE_GHL_FORM_ID` set in `.env` (gitignored) and in Vercel for Production and Preview. Tests ignore `.env` and stub env vars explicitly.
+22. New `/privacy` page, linked from every footer.
+23. Report charts use the brand pair (emerald = handed off, amber = stays with you), validated for color-vision deficiency; because contrast vs the surface is under 3:1, each chart has a legend, a direct label and a "See the numbers" table. One y-axis only: the 12-month chart plots hours; dollars are in the end label, tooltip and table.
+24. The PDF uses built-in Helvetica (selectable text, no font download), 2 pages.
