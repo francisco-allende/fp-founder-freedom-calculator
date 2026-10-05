@@ -52,7 +52,7 @@ describe('calculator flow', () => {
     // Add a custom task (defaults 1h × 50%).
     fireEvent.change(screen.getByLabelText('Task name'), { target: { value: 'Board updates' } });
     fireEvent.click(screen.getByRole('button', { name: 'Add this task' }));
-    expect(screen.getByRole('heading', { name: 'Your own tasks' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /^Your own tasks/ })).toBeInTheDocument();
     expect(screen.getByText('That time is worth $11.2K a month.')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));

@@ -82,6 +82,7 @@ export const WIZARD = {
     rateHelperTarget: 'Yearly income or profit target',
     rateHelperResult: (rate: string) => `That works out to about ${rate} an hour.`,
     rateHelperUse: 'Use this rate',
+    rateLine: (rate: string) => `1 hour of your time = ${rate}`,
     required: 'Pick one to continue.',
   },
   tasks: {
@@ -99,12 +100,22 @@ export const WIZARD = {
     estimate: 'Defaults are estimates. Change anything that doesn’t match your week.',
     noticeOver: 'Your tasks add up to more than the hours you work. Worth a second look.',
     noticeHigh: 'That leaves almost no time for the work only you can do.',
+    areaSubtotal: (hours: string) => `${hours} h you could hand off`,
+    areaCount: (selected: number, total: number) => `${selected} of ${total} tasks`,
   },
   live: {
     label: 'You could hand off',
     perWeek: 'hours a week',
     range: (low: string, high: string) => `${low} to ${high} hours, realistically`,
     cost: (month: string) => `That time is worth ${month} a month.`,
+    weekHeading: 'Your week',
+    handed: 'Handed off',
+    kept: 'Stays with you',
+    weekCaption: (hours: number) => `Each block is 1 hour of your ${hours}-hour week.`,
+    workdays: (days: number) =>
+      days < 1
+        ? 'That’s less than a workday back every month'
+        : `That’s about ${days} workday${days === 1 ? '' : 's'} back every month`,
   },
   calendar: {
     heading: 'Want a sharper result?',
@@ -112,6 +123,15 @@ export const WIZARD = {
       'Add a calendar export and we will measure your meetings, focus time and fragmented hours from the last 4 weeks.',
     skip: 'Skip, I’m done',
     add: 'Add my calendar for a sharper result',
+    sample: 'Try it with a sample calendar',
+    sampleBadge: 'Sample data',
+    sampleNote:
+      'This is a sample founder month, not your calendar. Nothing from it reaches your results unless you click Use this.',
+    sampleClose: 'Close the sample',
+    previewCaption: 'What the X-ray shows',
+    previewMeetings: 'Meetings',
+    previewFocus: 'Focus time',
+    previewNote: 'Illustration only. Your numbers come from your own calendar.',
     privacy: 'Your calendar is read inside this browser tab. Nothing is uploaded or stored.',
     google: {
       title: 'Google Calendar',
@@ -139,6 +159,7 @@ export const WIZARD = {
       fragmented: 'hours lost to gaps under 30 minutes',
     },
     suggestionsHeading: 'Suggested from your calendar',
+    sampleSuggestionsHeading: 'Suggested from the sample calendar',
     suggestionAccept: 'Use this',
     suggestionAccepted: 'Added to your tasks',
     heatmapCaption: 'Minutes booked per hour, average week',
