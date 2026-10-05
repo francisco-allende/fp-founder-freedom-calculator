@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { isStoredQualification, readJSON, STORAGE_KEYS } from '../lib/storage';
 import Calculator from './Calculator';
 import { nextPath } from './Next';
@@ -112,6 +112,40 @@ describe('calculator flow', () => {
       fireEvent.change(within(inboxRow).getByLabelText('Hours per week'), { target: { value: '10' } });
     });
     expect(screen.getByText('That leaves almost no time for the work only you can do.')).toBeInTheDocument();
+  });
+
+  it('with a form id: embeds the GHL form with exact prefill, and a GHL submit message reveals Continue', async () => {
+    vi.stubEnv('VITE_GHL_FORM_ID', '7ub37F7yzxkw00xHGo8q');
+    vi.stubEnv('VITE_SITE_URL', 'https://fp-founder-freedom-calculator.vercel.app');
+    try {
+      renderCalculator();
+      completeStep1();
+      fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Skip, I’m done' }));
+
+      const frame = await screen.findByTitle('Where should we send your report?');
+      const src = new URL(frame.getAttribute('src')!);
+      expect(src.origin + src.pathname).toBe('https://api.leadconnectorhq.com/widget/form/7ub37F7yzxkw00xHGo8q');
+      expect(src.searchParams.get('first_name')).toBe('Fran');
+      expect(src.searchParams.get('fft_role')).toBe('Founder / Owner');
+      expect(src.searchParams.get('fft_revenue')).toBe('$1M–$5M');
+      expect(src.searchParams.get('fft_timeline')).toBe('Now');
+      expect(src.searchParams.get('fft_qualified')).toBe('yes');
+      expect(src.searchParams.get('fft_report_url')).toMatch(/^https:\/\/fp-founder-freedom-calculator\.vercel\.app\/report\?d=/);
+      expect(document.querySelector('script[src="https://link.msgsndr.com/js/form_embed.js"]')).not.toBeNull();
+
+      expect(screen.queryByRole('link', { name: 'Continue to my report' })).toBeNull();
+      act(() => {
+        window.dispatchEvent(new MessageEvent('message', { origin: 'https://evil.example', data: 'form submitted' }));
+      });
+      expect(screen.queryByRole('link', { name: 'Continue to my report' })).toBeNull();
+      act(() => {
+        window.dispatchEvent(new MessageEvent('message', { origin: 'https://api.leadconnectorhq.com', data: { type: 'form-submitted' } }));
+      });
+      expect(screen.getByRole('link', { name: 'Continue to my report' })).toHaveAttribute('href', '/next');
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it('/next falls back to /thanks when storage is empty', () => {

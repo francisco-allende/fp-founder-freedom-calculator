@@ -4,11 +4,17 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    // react-pdf (~1.2 MB) loads only on "Download PDF"; Recharts only on /report.
+    chunkSizeWarningLimit: 1300,
+  },
   test: {
     globals: true,
     environment: 'jsdom',
     include: ['src/**/*.test.{ts,tsx}'],
     setupFiles: ['src/test/setup.ts'],
+    // Tests never depend on a developer's local .env; individual tests stub what they need.
+    env: { VITE_SITE_URL: '', VITE_GHL_FORM_ID: '', VITE_GHL_CALENDAR_ID: '' },
     coverage: {
       provider: 'v8',
       // List every engine file, including the ones at 100%.
