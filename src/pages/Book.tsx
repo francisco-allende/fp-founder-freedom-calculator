@@ -4,7 +4,8 @@ import { PageShell } from '../components/PageShell/PageShell';
 import { GUARANTEES } from '../data/copy';
 import { BOOK } from '../data/pageCopy';
 import { decodeReport } from '../engine/reportState';
-import { buildBookingSrc, GHL_EMBED_SCRIPT } from '../lib/ghl';
+import { buildBookingSrc } from '../lib/ghl';
+import { runEmbedScript } from '../lib/ghlEmbed';
 import { isStoredQualification, readJSON, STORAGE_KEYS } from '../lib/storage';
 import { reportPath } from '../report/model';
 import styles from './Followup.module.css';
@@ -18,12 +19,12 @@ export default function Book() {
   }, [path]);
   const calendarId = import.meta.env.VITE_GHL_CALENDAR_ID;
 
+  // Same id shape as HighLevel's own embed code (<calendarId>_<timestamp>).
+  const frameId = useMemo(() => `${calendarId}_${Date.now()}`, [calendarId]);
+
+  // form_embed.js auto-resizes /booking iframes it finds when it runs, so run it after mount.
   useEffect(() => {
-    if (!calendarId || document.querySelector(`script[src="${GHL_EMBED_SCRIPT}"]`)) return;
-    const s = document.createElement('script');
-    s.src = GHL_EMBED_SCRIPT;
-    s.async = true;
-    document.body.appendChild(s);
+    if (calendarId) runEmbedScript();
   }, [calendarId]);
 
   return (
@@ -49,8 +50,7 @@ export default function Book() {
             className={styles.calendar}
             src={buildBookingSrc(calendarId, { firstName })}
             title="FP | Francisco Allende | Matching Call"
-            id={`${calendarId}_booking`}
-            scrolling="no"
+            id={frameId}
           />
         ) : (
           <p className={styles.note}>{BOOK.calendarMissing}</p>

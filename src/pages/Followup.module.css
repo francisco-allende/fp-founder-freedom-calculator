@@ -40,12 +40,24 @@
   color: var(--slate);
 }
 
+/* Height comes from form_embed.js auto-resize: no fixed height, and it may grow the iframe.
+   Inside our page the widget often reports a height of 0, so the min-height is the real
+   safety net: sized to the widget's tallest state (calendar + time slots + details form)
+   so the confirm button is never behind an inner scrollbar. Measured 2026-10-05:
+   about 1,400px on phones, about 925px from tablet width up. */
 .calendar {
+  display: block;
   width: 100%;
-  min-height: 720px;
+  min-height: 90rem;
   border: none;
   border-radius: var(--radius-control);
   background: var(--white);
+}
+
+@media (min-width: 40rem) {
+  .calendar {
+    min-height: 60rem;
+  }
 }
 
 .note {
