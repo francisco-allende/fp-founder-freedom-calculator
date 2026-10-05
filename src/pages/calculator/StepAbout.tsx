@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react';
 import { useId, useRef, useState, type FormEvent } from 'react';
 import { Button } from '../../components/Button/Button';
 import { RateHelper } from '../../components/RateHelper/RateHelper';
@@ -5,6 +6,7 @@ import { StepHeading } from '../../components/StepHeading/StepHeading';
 import { WIZARD } from '../../data/copy';
 import { REVENUE_BANDS, ROLES, TIMELINES } from '../../data/options';
 import { MAX_NAME_LENGTH } from '../../engine/constants';
+import { formatMoney } from '../../engine/format';
 import { aboutComplete, WEEKLY_HOURS, type About } from '../../state/wizard';
 import styles from './Step.module.css';
 import type { StepProps } from './types';
@@ -32,7 +34,10 @@ function Chips({
         {options.map((option) => (
           <label key={option} className={styles.chip}>
             <input type="radio" name={name} value={option} checked={value === option} onChange={() => onChange(option)} />
-            <span>{option}</span>
+            <span>
+              {value === option && <Check size={16} strokeWidth={2.5} aria-hidden="true" />}
+              {option}
+            </span>
           </label>
         ))}
       </div>
@@ -138,6 +143,9 @@ export function StepAbout({ state, dispatch, go, focusHeading }: StepProps) {
           />
           <span className={styles.hint}>per hour</span>
         </div>
+        <p className={styles.rateLine}>
+          {a.rateLine(formatMoney(about.rate))}
+        </p>
         <p id="rate-hint" className={styles.hint}>
           {a.rateHint}
         </p>

@@ -73,17 +73,29 @@
 .chip span {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  gap: var(--space-2);
+  min-height: 2.75rem;
   padding: 0 var(--space-4);
   border: 1px solid var(--slate);
   border-radius: var(--radius-control);
   background: var(--white);
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    color 150ms ease-out;
 }
 
-.chip input:checked + span {
-  background: var(--forest);
+.chip:hover span {
   border-color: var(--forest);
-  color: var(--white);
+  background: var(--surface);
+}
+
+/* Selected: filled emerald, dark text, check icon. */
+.chip input:checked + span {
+  background: var(--emerald);
+  border-color: var(--emerald);
+  color: var(--forest);
+  font-weight: 600;
 }
 
 .chip input:focus-visible + span {
@@ -115,15 +127,9 @@
 
 .areas {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-3);
 }
 
-.area h2 {
-  font-size: var(--fs-20);
-  font-weight: 600;
-  padding-bottom: var(--space-2);
-  border-bottom: 2px solid var(--forest);
-}
 
 .list {
   list-style: none;
@@ -142,8 +148,8 @@
   color: var(--slate);
 }
 
-.areaHeading {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+
+.rateLine {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
