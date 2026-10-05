@@ -29,7 +29,32 @@ export interface GhlHidden {
   utm: Utm;
 }
 
-/** Whole numbers for money, one decimal for hours, two for the multiple: what the email templates print. */
+/** The 13 hidden fields, by their GHL query key (SPEC §9). Every one is always sent, never empty. */
+export const HIDDEN_KEYS = [
+  'fft_delegable_hours',
+  'fft_hours_low',
+  'fft_monthly_cost',
+  'fft_annual_cost',
+  'fft_roi_multiple',
+  'fft_top_tasks',
+  'fft_report_url',
+  'fft_qualified',
+  'fft_tier',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+] as const;
+
+/** Defaults for UTMs on direct visits (GA convention), so no hidden field is ever empty. */
+export const UTM_FALLBACK = { utm_source: '(direct)', utm_medium: '(none)', utm_campaign: '(none)', utm_content: '(none)' } as const;
+
+/** Plain number for GHL Number fields: no "$", no commas, no exponent, no padded zeros. */
+const plain = (n: number, decimals: number) => {
+  const f = 10 ** decimals;
+  return String(Math.round((Number.isFinite(n) ? n : 0) * f) / f);
+};
+
 export function formParams(prefill: GhlPrefill, hidden: GhlHidden): URLSearchParams {
   const p = new URLSearchParams();
   if (prefill.firstName) p.set('first_name', prefill.firstName);
@@ -37,16 +62,31 @@ export function formParams(prefill: GhlPrefill, hidden: GhlHidden): URLSearchPar
   if (prefill.revenue) p.set('fft_revenue', prefill.revenue);
   if (prefill.timeline) p.set('fft_timeline', prefill.timeline);
 
-  p.set('fft_delegable_hours', hidden.delegableHours.toFixed(1));
-  p.set('fft_hours_low', hidden.hoursLow.toFixed(1));
-  p.set('fft_monthly_cost', Math.round(hidden.monthlyCost).toString());
-  p.set('fft_annual_cost', Math.round(hidden.annualCost).toString());
-  p.set('fft_roi_multiple', hidden.roiMultiple.toFixed(2));
-  p.set('fft_top_tasks', hidden.topTasks.slice(0, 3).join(', '));
+  p.set('fft_delegable_hours', plain(hidden.delegableHours, 1));
+  p.set('fft_hours_low', plain(hidden.hoursLow, 1));
+  p.set('fft_monthly_cost', plain(hidden.monthlyCost, 0));
+  p.set('fft_annual_cost', plain(hidden.annualCost, 0));
+  p.set('fft_roi_multiple', plain(hidden.roiMultiple, 2));
+  p.set('fft_top_tasks', hidden.topTasks.slice(0, 3).join(', ') || 'none');
   p.set('fft_report_url', hidden.reportUrl);
   p.set('fft_qualified', hidden.qualified ? 'yes' : 'no');
-  p.set('fft_tier', hidden.tier ?? '');
-  for (const [key, value] of Object.entries(hidden.utm)) if (value) p.set(key, value);
+  p.set('fft_tier', hidden.tier ?? 'none');
+  for (const key of Object.keys(UTM_FALLBACK) as (keyof typeof UTM_FALLBACK)[]) {
+    p.set(key, hidden.utm[key] || UTM_FALLBACK[key]);
+  }
+  return p;
+}
+
+/**
+ * The same values for the parent page's URL. form_embed.js merges the parent URL's query into
+ * what it hands the form, so mirroring them there covers both paths. UTM placeholders are left
+ * out so GHL's own UTM tracking never records a fake source.
+ */
+export function parentPageParams(prefill: GhlPrefill, hidden: GhlHidden): URLSearchParams {
+  const p = formParams(prefill, hidden);
+  for (const key of Object.keys(UTM_FALLBACK) as (keyof typeof UTM_FALLBACK)[]) {
+    if (!hidden.utm[key]) p.delete(key);
+  }
   return p;
 }
 

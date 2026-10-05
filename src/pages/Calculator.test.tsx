@@ -117,6 +117,16 @@ describe('calculator flow', () => {
   it('with a form id: embeds the GHL form with exact prefill, and a GHL submit message reveals Continue', async () => {
     vi.stubEnv('VITE_GHL_FORM_ID', '7ub37F7yzxkw00xHGo8q');
     vi.stubEnv('VITE_SITE_URL', 'https://fp-founder-freedom-calculator.vercel.app');
+    // Record whether the form iframe already exists each time form_embed.js is inserted.
+    const iframePresentAtScript: boolean[] = [];
+    const realAppend = document.body.appendChild.bind(document.body);
+    const spy = vi.spyOn(document.body, 'appendChild').mockImplementation(<T extends Node>(node: T): T => {
+      if (node instanceof HTMLScriptElement && node.src.includes('form_embed.js')) {
+        iframePresentAtScript.push(!!document.querySelector('iframe[title="Where should we send your report?"]'));
+      }
+      return realAppend(node);
+    });
+    window.history.replaceState(null, '', '/calculator');
     try {
       renderCalculator();
       completeStep1();
@@ -133,6 +143,17 @@ describe('calculator flow', () => {
       expect(src.searchParams.get('fft_qualified')).toBe('yes');
       expect(src.searchParams.get('fft_report_url')).toMatch(/^https:\/\/fp-founder-freedom-calculator\.vercel\.app\/report\?d=/);
       expect(document.querySelector('script[src="https://link.msgsndr.com/js/form_embed.js"]')).not.toBeNull();
+      expect(iframePresentAtScript.length).toBeGreaterThan(0);
+      expect(iframePresentAtScript.every(Boolean)).toBe(true);
+
+      // The same fields are mirrored onto the page URL for form_embed.js…
+      const pageParams = new URLSearchParams(window.location.search);
+      expect(window.location.pathname).toBe('/calculator');
+      expect(pageParams.get('fft_delegable_hours')).toBe(src.searchParams.get('fft_delegable_hours'));
+      expect(pageParams.get('fft_report_url')).toBe(src.searchParams.get('fft_report_url'));
+      expect(pageParams.get('fft_revenue')).toBe('$1M–$5M');
+      expect(pageParams.has('utm_source')).toBe(false); // no fake UTMs on the page URL
+      expect(src.searchParams.get('utm_source')).toBe('(direct)'); // but the form gets every field
 
       expect(screen.queryByRole('link', { name: 'Continue to my report' })).toBeNull();
       act(() => {
@@ -143,7 +164,12 @@ describe('calculator flow', () => {
         window.dispatchEvent(new MessageEvent('message', { origin: 'https://api.leadconnectorhq.com', data: { type: 'form-submitted' } }));
       });
       expect(screen.getByRole('link', { name: 'Continue to my report' })).toHaveAttribute('href', '/next');
+
+      // …and the original URL comes back when the visitor leaves the step.
+      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      expect(window.location.search).toBe('');
     } finally {
+      spy.mockRestore();
       vi.unstubAllEnvs();
     }
   });

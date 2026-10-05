@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildBookingSrc, buildFormSrc, looksLikeSubmitMessage, type GhlHidden } from './ghl';
+import { buildBookingSrc, buildFormSrc, HIDDEN_KEYS, looksLikeSubmitMessage, parentPageParams, type GhlHidden } from './ghl';
 import { captureUtm, getUtm, parseUtm } from './utm';
 
 describe('utm', () => {
@@ -53,22 +53,70 @@ describe('ghl', () => {
       fft_hours_low: '11.2',
       fft_monthly_cost: '13803',
       fft_annual_cost: '165636',
-      fft_roi_multiple: '4.60',
+      fft_roi_multiple: '4.6',
       fft_top_tasks: 'Sorting and answering email, Scheduling and rescheduling meetings, Booking travel',
       fft_report_url: 'https://example.com/report?d=abc+def',
       fft_qualified: 'yes',
       fft_tier: 'core',
       utm_source: 'meta',
       utm_content: 'ad3-expert',
+      utm_medium: '(none)',
+      utm_campaign: '(none)',
     });
   });
 
-  it('omits empty prefill values and writes no tier when not qualified', () => {
+  it('omits empty prefill values; tier and UTMs fall back to placeholders, never empty', () => {
     const src = new URL(buildFormSrc('f', { firstName: '', role: '', revenue: '', timeline: '' }, { ...hidden, qualified: false, tier: null, utm: {} }));
     expect(src.searchParams.has('first_name')).toBe(false);
     expect(src.searchParams.get('fft_qualified')).toBe('no');
-    expect(src.searchParams.get('fft_tier')).toBe('');
-    expect(src.searchParams.has('utm_source')).toBe(false);
+    expect(src.searchParams.get('fft_tier')).toBe('none');
+    expect(src.searchParams.get('utm_source')).toBe('(direct)');
+    expect(src.searchParams.get('utm_content')).toBe('(none)');
+  });
+
+  it('all 13 hidden keys are always present and non-empty, whatever the inputs', () => {
+    const cases: GhlHidden[] = [
+      hidden,
+      { ...hidden, qualified: false, tier: null, utm: {}, topTasks: [] },
+      { ...hidden, delegableHours: 0, hoursLow: 0, monthlyCost: 0, annualCost: 0, roiMultiple: 0 },
+      { ...hidden, delegableHours: Number.NaN, monthlyCost: Number.POSITIVE_INFINITY },
+    ];
+    for (const h of cases) {
+      const p = new URL(buildFormSrc('f', { firstName: '', role: '', revenue: '', timeline: '' }, h)).searchParams;
+      expect(HIDDEN_KEYS).toHaveLength(13);
+      for (const key of HIDDEN_KEYS) expect(p.get(key), key).toMatch(/\S/);
+    }
+  });
+
+  it('Number-type fields are plain numbers: digits and one optional dot, no $, commas or exponent', () => {
+    const values = [0, 0.04, 1.25, 16.05, 999.95, 13_803.4, 1_234_567.89, 4.601, 1e-7, 3.999];
+    for (const v of values) {
+      const p = new URL(
+        buildFormSrc('f', { firstName: '', role: '', revenue: '', timeline: '' }, {
+          ...hidden,
+          delegableHours: v,
+          hoursLow: v * 0.7,
+          monthlyCost: v * 860,
+          annualCost: v * 10_320,
+          roiMultiple: v / 3,
+        }),
+      ).searchParams;
+      for (const key of ['fft_delegable_hours', 'fft_hours_low', 'fft_monthly_cost', 'fft_annual_cost', 'fft_roi_multiple']) {
+        expect(p.get(key), `${key}=${p.get(key)} for ${v}`).toMatch(/^\d+(\.\d+)?$/);
+      }
+      expect(p.get('fft_monthly_cost')).not.toContain('.');
+      expect(p.get('fft_annual_cost')).not.toContain('.');
+    }
+  });
+
+  it('parent-page params carry the same fields but never fake UTMs', () => {
+    const prefill = { firstName: 'Fran', role: 'Founder / Owner', revenue: '$1M–$5M', timeline: 'Now' };
+    const p = parentPageParams(prefill, { ...hidden, utm: { utm_source: 'meta' } });
+    expect(p.get('fft_delegable_hours')).toBe('16.1');
+    expect(p.get('fft_report_url')).toBe(hidden.reportUrl);
+    expect(p.get('utm_source')).toBe('meta');
+    expect(p.has('utm_medium')).toBe(false);
+    expect(p.has('utm_content')).toBe(false);
   });
 
   it('builds the booking src', () => {

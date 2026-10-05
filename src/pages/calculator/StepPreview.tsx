@@ -25,6 +25,11 @@ export function StepPreview({ state, tasks, results, go, focusHeading }: StepPro
   const roadmap = useMemo(() => buildRoadmap(tasks), [tasks]);
   const map = useMemo(() => taskMap(tasks), [tasks]);
 
+  const prefill = useMemo(
+    () => ({ firstName: about.firstName, role: about.role, revenue: about.revenue, timeline: about.timeline }),
+    [about.firstName, about.role, about.revenue, about.timeline],
+  );
+
   const hidden: GhlHidden = useMemo(() => {
     const q = qualify({
       role: about.role,
@@ -121,7 +126,7 @@ export function StepPreview({ state, tasks, results, go, focusHeading }: StepPro
         <h2 id="gate-heading">{p.gate}</h2>
         <GateForm
           formId={import.meta.env.VITE_GHL_FORM_ID}
-          prefill={{ firstName: about.firstName, role: about.role, revenue: about.revenue, timeline: about.timeline }}
+          prefill={prefill}
           hidden={hidden}
         />
       </section>
