@@ -4,7 +4,7 @@ import { GateForm } from '../../components/GateForm/GateForm';
 import { StepHeading } from '../../components/StepHeading/StepHeading';
 import { FOOTNOTE, WIZARD } from '../../data/copy';
 import { formatHours, formatMoney } from '../../engine/format';
-import { taskDelegableHours } from '../../engine/math';
+import { topTaskNames } from '../../engine/math';
 import { qualify } from '../../engine/qualify';
 import { buildReportUrl, toReportCalendar } from '../../engine/reportState';
 import { buildRoadmap, taskMap } from '../../engine/roadmap';
@@ -43,11 +43,7 @@ export function StepPreview({ state, tasks, results, go, focusHeading }: StepPro
       tasks,
       calendar: calendar ? toReportCalendar(calendar) : null,
     });
-    const topTasks = [...tasks]
-      .sort((a, b) => taskDelegableHours(b) - taskDelegableHours(a))
-      .filter((t) => taskDelegableHours(t) > 0)
-      .slice(0, 3)
-      .map((t) => t.name);
+    const topTasks = topTaskNames(tasks);
     return {
       delegableHours: results.hours.realistic,
       hoursLow: results.hours.low,

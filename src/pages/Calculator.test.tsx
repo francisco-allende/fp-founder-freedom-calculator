@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { isStoredQualification, readJSON, STORAGE_KEYS } from '../lib/storage';
 import Calculator from './Calculator';
-import { nextPath } from './Next';
+import { finishRun, nextPath } from './Next';
 
 function renderCalculator() {
   return render(
@@ -73,12 +73,76 @@ describe('calculator flow', () => {
     expect(stored.qualified).toBe(true);
     expect(stored.tier).toBe('core');
     expect(stored.reportUrl).toMatch(/\/report\?d=/);
-    expect(stored.topTasks).toEqual([
-      'Scheduling and rescheduling meetings',
-      'Follow-ups after calls',
-      'Tracking projects and open loops',
-    ]);
+    expect(stored.firstName).toBe('Fran');
+    expect(Object.keys(stored).sort()).toEqual(['firstName', 'qualified', 'reportUrl', 'tier']);
     expect(nextPath()).toBe('/book');
+  });
+
+  it('a completed run is cleared on /next: opening /calculator again starts empty', async () => {
+    const first = renderCalculator();
+    completeStep1();
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Include Booking travel' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Skip, I’m done' }));
+    await screen.findByRole('link', { name: 'Continue to my report' });
+    first.unmount();
+
+    // The gate was submitted and GHL redirected to /next.
+    expect(finishRun()).toBe('http://localhost:3000/book');
+    expect(window.sessionStorage.getItem(STORAGE_KEYS.wizard)).toBeNull();
+    // /book and /thanks still have what they need.
+    expect(readJSON(STORAGE_KEYS.qualification, isStoredQualification)).toMatchObject({ qualified: true, firstName: 'Fran' });
+
+    renderCalculator();
+    expect(screen.getByRole('heading', { level: 1, name: 'First, a little about you' })).toBeInTheDocument();
+    expect(screen.getByLabelText('First name')).toHaveValue('');
+    expect(within(screen.getByRole('group', { name: 'Your role' })).getByRole('radio', { name: 'Founder / Owner' })).not.toBeChecked();
+    completeStep1();
+    // Task choices are back to the defaults too.
+    expect(screen.getByRole('checkbox', { name: 'Include Booking travel' })).toBeChecked();
+  });
+
+  it('qualification and hidden fields always follow the current step-1 answers, never a cached run', async () => {
+    vi.stubEnv('VITE_GHL_FORM_ID', '7ub37F7yzxkw00xHGo8q');
+    try {
+      renderCalculator();
+      completeStep1(); // Founder / Owner, $1M–$5M, Now
+      fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Skip, I’m done' }));
+      const srcOf = async () => new URL((await screen.findByTitle('Where should we send your report?')).getAttribute('src')!).searchParams;
+      const stored = () => readJSON(STORAGE_KEYS.qualification, isStoredQualification)!;
+
+      let p = await srcOf();
+      expect([p.get('fft_qualified'), p.get('fft_tier'), stored().qualified, stored().tier]).toEqual(['yes', 'core', true, 'core']);
+
+      // Back to step 1, change only the role, and return to the gate.
+      const backTo1 = () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Back' })); // 4 → 3
+        fireEvent.click(screen.getByRole('button', { name: 'Back' })); // 3 → 2
+        fireEvent.click(screen.getByRole('button', { name: 'Back' })); // 2 → 1
+      };
+      const toGate = () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Pick my tasks' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Skip, I’m done' }));
+      };
+      backTo1();
+      choose('Your role', 'Executive');
+      toGate();
+      p = await srcOf();
+      expect(p.get('fft_role')).toBe('Executive');
+      expect([p.get('fft_qualified'), p.get('fft_tier'), stored().qualified, stored().tier]).toEqual(['no', 'none', false, null]);
+
+      // Founder again but $500K–$1M: qualified, growth tier.
+      backTo1();
+      choose('Your role', 'Founder / Owner');
+      choose('Annual revenue', '$500K–$1M');
+      toGate();
+      p = await srcOf();
+      expect([p.get('fft_qualified'), p.get('fft_tier'), stored().qualified, stored().tier]).toEqual(['yes', 'growth', true, 'growth']);
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it('an unqualified founder is routed to /thanks', async () => {

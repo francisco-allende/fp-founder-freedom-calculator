@@ -4,6 +4,7 @@
 export const NAV = {
   start: 'Start the calculator',
   privacy: 'Privacy',
+  startOver: 'Start a new calculation',
 } as const;
 
 export const LANDING = {

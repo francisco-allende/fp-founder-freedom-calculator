@@ -26,18 +26,18 @@ export function GateForm({ formId, prefill, hidden }: Props) {
   const [stored, setStored] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // SPEC §4: qualification and report URL are stored before the form renders,
-  // so /next can route the moment GHL redirects.
+  // SPEC §4: qualification and report URL are stored before the form renders, so /next can route
+  // the moment GHL redirects. Re-written from the current answers on every change, never reused.
   useEffect(() => {
     const record: StoredQualification = {
       qualified: hidden.qualified,
       tier: hidden.tier,
       reportUrl: hidden.reportUrl,
-      topTasks: hidden.topTasks.slice(0, 3),
+      firstName: prefill.firstName,
     };
     writeJSON(STORAGE_KEYS.qualification, record);
     setStored(true);
-  }, [hidden.qualified, hidden.tier, hidden.reportUrl, hidden.topTasks]);
+  }, [hidden.qualified, hidden.tier, hidden.reportUrl, prefill.firstName]);
 
   // Mirror the fields onto this page's URL while the form is shown (form_embed.js reads it),
   // then put the original URL back when the visitor leaves the step.

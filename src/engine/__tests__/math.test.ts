@@ -13,6 +13,7 @@ import {
   hoursRange,
   monthlyCost,
   roiMultiple,
+  topTaskNames,
   workloadNotice,
   year1Net,
 } from '../math';
@@ -127,5 +128,16 @@ describe('helpers', () => {
   it('formats hours with one decimal at most', () => {
     expect(formatHours(16.05)).toBe('16.1');
     expect(formatHours(12)).toBe('12');
+  });
+});
+
+describe('topTaskNames', () => {
+  it('top 3 by delegable hours, ties in input order, zero-hour tasks never listed', () => {
+    expect(topTaskNames(defaultTasks())).toEqual([
+      'Sorting and answering email',
+      'Scheduling and rescheduling meetings',
+      'Follow-ups after calls', // ties with tracker/research at 1.2h; library order wins
+    ]);
+    expect(topTaskNames([task(0, 1), task(2, 0)])).toEqual([]);
   });
 });

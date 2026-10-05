@@ -1,5 +1,5 @@
-import { render, screen, within } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { customTask, defaultTasks, TASKS_BY_ID, taskFromDef } from '../data/tasks';
 import { encodeReport } from '../engine/reportState';
@@ -7,6 +7,7 @@ import type { ReportState } from '../engine/types';
 import { STORAGE_KEYS, writeJSON, type StoredQualification } from '../lib/storage';
 import { buildReportModel, pdfFileName, reportPath } from '../report/model';
 import Book from './Book';
+import Calculator from './Calculator';
 import Landing from './Landing';
 import Privacy from './Privacy';
 import Report from './Report';
@@ -34,7 +35,7 @@ function storeQualification(patch: Partial<StoredQualification> = {}) {
     qualified: true,
     tier: 'core',
     reportUrl,
-    topTasks: ['Sorting and answering email', 'Scheduling and rescheduling meetings', 'Booking travel'],
+    firstName: 'Fran',
     ...patch,
   });
 }
@@ -110,7 +111,7 @@ describe('/book', () => {
     storeQualification();
     at('/book', <Book />);
     expect(screen.getByRole('heading', { level: 1, name: /Let's match you with a Right Hand/ })).toBeInTheDocument();
-    expect(screen.getByText('Booking travel')).toBeInTheDocument();
+    expect(screen.getByText('Follow-ups after calls')).toBeInTheDocument(); // top 3 derived from the report link
     expect(screen.getByText('You get 3 hand-picked candidates in 24 hours.')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Matching Guarantee' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'View my report now' })).toHaveAttribute('href', `/report?d=${d}`);
@@ -150,6 +151,33 @@ describe('/thanks', () => {
   it('falls back gracefully with empty storage', () => {
     at('/thanks', <Thanks />);
     expect(screen.getByText('Your first 2 quick wins are at the top of your 90-day plan.')).toBeInTheDocument();
+  });
+});
+
+describe('"Start a new calculation"', () => {
+  it.each([
+    ['/book', <Book key="b" />],
+    ['/thanks', <Thanks key="t" />],
+  ])('on %s it clears everything and opens a clean step 1', (path, page) => {
+    storeQualification();
+    // Leftovers from a run, plus first-touch UTMs that must survive.
+    window.sessionStorage.setItem(STORAGE_KEYS.wizard, JSON.stringify({ v: 1, step: 4 }));
+    window.sessionStorage.setItem(STORAGE_KEYS.utm, JSON.stringify({ utm_source: 'meta' }));
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path={path} element={page} />
+          <Route path="/calculator" element={<Calculator />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Start a new calculation' }));
+
+    expect(screen.getByRole('heading', { level: 1, name: 'First, a little about you' })).toBeInTheDocument();
+    expect(screen.getByLabelText('First name')).toHaveValue('');
+    expect(window.sessionStorage.getItem(STORAGE_KEYS.qualification)).toBeNull();
+    expect(JSON.parse(window.sessionStorage.getItem(STORAGE_KEYS.wizard)!)).toMatchObject({ step: 1, about: { firstName: '', role: '' } });
+    expect(window.sessionStorage.getItem(STORAGE_KEYS.utm)).toBe('{"utm_source":"meta"}');
   });
 });
 

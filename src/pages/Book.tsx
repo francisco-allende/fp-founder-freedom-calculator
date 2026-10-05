@@ -3,20 +3,19 @@ import { ButtonLink } from '../components/Button/Button';
 import { PageShell } from '../components/PageShell/PageShell';
 import { GUARANTEES } from '../data/copy';
 import { BOOK } from '../data/pageCopy';
-import { decodeReport } from '../engine/reportState';
+import { StartOverButton } from '../components/StartOver/StartOverButton';
 import { buildBookingSrc } from '../lib/ghl';
 import { runEmbedScript } from '../lib/ghlEmbed';
-import { isStoredQualification, readJSON, STORAGE_KEYS } from '../lib/storage';
-import { reportPath } from '../report/model';
+import { readCompletedRun } from '../lib/session';
+import { reportFromRun } from '../report/model';
+import { topTaskNames } from '../engine/math';
 import styles from './Followup.module.css';
 
 export default function Book() {
-  const stored = useMemo(() => readJSON(STORAGE_KEYS.qualification, isStoredQualification), []);
-  const path = stored ? reportPath(stored.reportUrl) : null;
-  const firstName = useMemo(() => {
-    const d = path ? new URLSearchParams(path.split('?')[1]).get('d') : null;
-    return decodeReport(d)?.firstName ?? '';
-  }, [path]);
+  const run = useMemo(() => readCompletedRun(), []);
+  const report = useMemo(() => reportFromRun(run), [run]);
+  const topTasks = report ? topTaskNames(report.state.tasks) : [];
+  const firstName = run?.firstName ?? '';
   const calendarId = import.meta.env.VITE_GHL_CALENDAR_ID;
 
   // Same id shape as HighLevel's own embed code (<calendarId>_<timestamp>).
@@ -31,11 +30,11 @@ export default function Book() {
     <PageShell>
       <section className={styles.section}>
         <h1>{BOOK.heading}</h1>
-        {stored && stored.topTasks.length > 0 && (
+        {topTasks.length > 0 && (
           <div>
             <h2 className={styles.h2}>{BOOK.topTasks}</h2>
             <ol className={styles.tasks}>
-              {stored.topTasks.map((t) => (
+              {topTasks.map((t) => (
                 <li key={t}>{t}</li>
               ))}
             </ol>
@@ -70,13 +69,14 @@ export default function Book() {
         </div>
       </section>
 
-      {path && (
-        <p>
-          <ButtonLink to={path} variant="secondary">
+      <p className={styles.actions}>
+        {report && (
+          <ButtonLink to={report.path} variant="secondary">
             {BOOK.viewReport}
           </ButtonLink>
-        </p>
-      )}
+        )}
+        <StartOverButton />
+      </p>
     </PageShell>
   );
 }

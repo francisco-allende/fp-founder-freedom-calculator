@@ -36,12 +36,15 @@ export function removeKey(key: string): void {
 export const isRecord = (x: unknown): x is Record<string, unknown> =>
   typeof x === 'object' && x !== null && !Array.isArray(x);
 
-/** Stored before the gate form renders; read by /next, /book and /thanks (SPEC §4, §9). */
+/**
+ * Written every time the gate renders (from the current answers, never cached); read by /next,
+ * /book and /thanks. The only thing that survives a completed run (SPEC §4, §9).
+ */
 export interface StoredQualification {
   qualified: boolean;
   tier: 'core' | 'growth' | null;
   reportUrl: string;
-  topTasks: string[];
+  firstName: string;
 }
 
 export function isStoredQualification(x: unknown): x is StoredQualification {
@@ -50,7 +53,6 @@ export function isStoredQualification(x: unknown): x is StoredQualification {
     typeof x.qualified === 'boolean' &&
     (x.tier === 'core' || x.tier === 'growth' || x.tier === null) &&
     typeof x.reportUrl === 'string' &&
-    Array.isArray(x.topTasks) &&
-    x.topTasks.every((t) => typeof t === 'string')
+    typeof x.firstName === 'string'
   );
 }

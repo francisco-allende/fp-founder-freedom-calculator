@@ -1,5 +1,6 @@
 import { computeResults, cumulative12Months, hoursByArea, type AreaHours, type CumulativePoint, type Results } from '../engine/math';
 import { buildRoadmap, taskMap, type Roadmap, type TaskMapBucket } from '../engine/roadmap';
+import { decodeReport } from '../engine/reportState';
 import type { ReportCalendar, ReportState, TaskInput } from '../engine/types';
 
 /** Everything the report page and the PDF show, derived once from the URL state. */
@@ -52,4 +53,12 @@ export function reportPath(reportUrl: string): string | null {
   } catch {
     return null;
   }
+}
+
+/** The report behind a completed run, decoded from its stored link (null if missing or broken). */
+export function reportFromRun(run: { reportUrl: string } | null): { path: string; state: ReportState } | null {
+  const path = run ? reportPath(run.reportUrl) : null;
+  if (!path) return null;
+  const state = decodeReport(new URLSearchParams(path.split('?')[1]).get('d'));
+  return state ? { path, state } : null;
 }

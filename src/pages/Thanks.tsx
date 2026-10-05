@@ -3,30 +3,24 @@ import { ButtonLink } from '../components/Button/Button';
 import { PageShell } from '../components/PageShell/PageShell';
 import { BRAND } from '../data/copy';
 import { THANKS } from '../data/pageCopy';
-import { decodeReport } from '../engine/reportState';
+import { StartOverButton } from '../components/StartOver/StartOverButton';
 import { buildRoadmap } from '../engine/roadmap';
-import { isStoredQualification, readJSON, STORAGE_KEYS } from '../lib/storage';
-import { reportPath } from '../report/model';
+import { readCompletedRun } from '../lib/session';
+import { reportFromRun } from '../report/model';
 import styles from './Followup.module.css';
 
 export default function Thanks() {
-  const stored = useMemo(() => readJSON(STORAGE_KEYS.qualification, isStoredQualification), []);
-  const path = stored ? reportPath(stored.reportUrl) : null;
-  const quickWins = useMemo(() => {
-    const d = path ? new URLSearchParams(path.split('?')[1]).get('d') : null;
-    const state = decodeReport(d);
-    return state ? buildRoadmap(state.tasks).weeks1to2.slice(0, 2) : [];
-  }, [path]);
+  const report = useMemo(() => reportFromRun(readCompletedRun()), []);
+  const quickWins = useMemo(() => (report ? buildRoadmap(report.state.tasks).weeks1to2.slice(0, 2) : []), [report]);
 
   return (
     <PageShell>
       <section className={styles.section}>
         <h1>{THANKS.heading}</h1>
-        {path && (
-          <p>
-            <ButtonLink to={path}>{THANKS.viewReport}</ButtonLink>
-          </p>
-        )}
+        <p className={styles.actions}>
+          {report && <ButtonLink to={report.path}>{THANKS.viewReport}</ButtonLink>}
+          <StartOverButton />
+        </p>
       </section>
 
       <section className={styles.section} aria-labelledby="thanks-next">

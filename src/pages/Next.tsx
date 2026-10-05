@@ -1,15 +1,24 @@
 import { useEffect } from 'react';
-import { isStoredQualification, readJSON, STORAGE_KEYS } from '../lib/storage';
+import { completeRun, readCompletedRun } from '../lib/session';
 
 /** Where to send the visitor after the gate (SPEC §9). Empty storage falls back to /thanks. */
 export function nextPath(): '/book' | '/thanks' {
-  const q = readJSON(STORAGE_KEYS.qualification, isStoredQualification);
-  return q?.qualified ? '/book' : '/thanks';
+  return readCompletedRun()?.qualified ? '/book' : '/thanks';
+}
+
+/**
+ * The gate was submitted: pick the destination from the stored qualification, then clear the
+ * wizard so the next visit to /calculator starts clean (SPEC §4). Returns the absolute target.
+ */
+export function finishRun(): string {
+  const target = new URL(nextPath(), window.location.origin).toString();
+  completeRun();
+  return target;
 }
 
 export default function Next() {
   useEffect(() => {
-    const target = new URL(nextPath(), window.location.origin).toString();
+    const target = finishRun();
     // GHL may load this page inside its iframe; break out to the top window (same origin after redirect).
     try {
       if (window.top && window.top !== window.self) {

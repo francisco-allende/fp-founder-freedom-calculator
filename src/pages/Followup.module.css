@@ -75,3 +75,9 @@
   border-radius: var(--radius-control);
   width: 100%;
 }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}

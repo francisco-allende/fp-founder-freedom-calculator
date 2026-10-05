@@ -126,6 +126,16 @@ export function cumulative12Months(hoursPerWeek: number, rate: number): Cumulati
   }));
 }
 
+/** Names of the tasks with the most delegable hours (ties keep input order). */
+export function topTaskNames(tasks: readonly TaskInput[], n = 3): string[] {
+  return tasks
+    .map((t, i) => ({ t, i, h: taskDelegableHours(t) }))
+    .filter((x) => x.h > 0)
+    .sort((a, b) => b.h - a.h || a.i - b.i)
+    .slice(0, n)
+    .map((x) => x.t.name);
+}
+
 export type WorkloadNotice = 'over' | 'high' | null;
 
 /** Soft notice in step 2: task hours vs. weekly hours worked. Informational, never an error. */
