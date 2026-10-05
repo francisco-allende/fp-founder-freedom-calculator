@@ -54,6 +54,7 @@ export function TaskRow({ name, hours, pct, needsApproval, selected = true, onTo
               max={MAX_TASK_HOURS}
               step={HOURS_STEP}
               value={hours}
+              style={{ ['--pct' as string]: `${(hours / MAX_TASK_HOURS) * 100}%` }}
               aria-valuetext={`${formatHours(hours)} hours per week`}
               disabled={!selected}
               onChange={(e) => onHours(Number(e.target.value))}
@@ -71,6 +72,7 @@ export function TaskRow({ name, hours, pct, needsApproval, selected = true, onTo
               max={100}
               step={5}
               value={pct}
+              style={{ ['--pct' as string]: `${pct}%` }}
               aria-valuetext={`${pct} percent`}
               disabled={!selected}
               onChange={(e) => onPct(Number(e.target.value))}

@@ -12,6 +12,8 @@ html {
 
 body {
   margin: 0;
+  /* Safety net only: real overflow causes are fixed at the source. clip (not hidden) keeps position: sticky working. */
+  overflow-x: clip;
   background: var(--mist);
   color: var(--ink);
   font-family: var(--font-body);
@@ -91,10 +93,73 @@ textarea {
   color: inherit;
 }
 
+/* Sliders: 44px touch area, 28px thumb, same look in every browser. */
 input[type='range'] {
-  accent-color: var(--emerald-strong);
+  -webkit-appearance: none;
+  appearance: none;
   width: 100%;
-  min-height: 44px; /* touch target */
+  min-height: 44px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  --track: #cfdcd5;
+  --fill: var(--emerald-strong);
+}
+
+input[type='range']:disabled {
+  cursor: not-allowed;
+}
+
+/* Filled part from --pct, set inline by each slider (WebKit has no progress pseudo-element). */
+input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--fill) var(--pct, 0%), var(--track) var(--pct, 0%));
+}
+
+input[type='range']::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+}
+
+input[type='range']::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--fill);
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  margin-top: -11px;
+  border-radius: 50%;
+  background: var(--fill);
+  border: 3px solid var(--white);
+  box-shadow: 0 1px 4px rgba(14, 42, 34, 0.35);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--fill);
+  border: 3px solid var(--white);
+  box-shadow: 0 1px 4px rgba(14, 42, 34, 0.35);
+}
+
+input[type='range']:focus-visible {
+  outline: none;
+}
+
+input[type='range']:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--emerald);
+}
+
+input[type='range']:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--emerald);
 }
 
 .visually-hidden {

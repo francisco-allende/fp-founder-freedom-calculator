@@ -107,7 +107,7 @@
 .pct {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--fs-31);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, var(--fs-31));
   color: var(--amber-strong);
   min-width: 4.2ch;
   white-space: nowrap;
@@ -237,7 +237,7 @@
 .stepNum {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--fs-49);
+  font-size: clamp(2.25rem, 1.6rem + 2vw, var(--fs-49));
   line-height: 1;
   color: var(--emerald-strong);
 }

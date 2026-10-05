@@ -18,7 +18,8 @@
 
 .control input {
   grid-column: 1 / -1;
-  accent-color: var(--emerald);
+  --fill: var(--emerald);
+  --track: rgba(255, 255, 255, 0.25);
 }
 
 .label {
@@ -28,8 +29,9 @@
 .value {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--fs-25);
+  font-size: clamp(1.25rem, 1rem + 1vw, var(--fs-25));
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
   color: var(--emerald);
 }
 

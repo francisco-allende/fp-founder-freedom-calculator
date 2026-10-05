@@ -117,6 +117,7 @@ export function StepAbout({ state, dispatch, go, focusHeading }: StepProps) {
             max={WEEKLY_HOURS.max}
             step={1}
             value={about.weeklyHours}
+            style={{ ['--pct' as string]: `${((about.weeklyHours - WEEKLY_HOURS.min) / (WEEKLY_HOURS.max - WEEKLY_HOURS.min)) * 100}%` }}
             aria-valuetext={`${about.weeklyHours} hours`}
             onChange={(e) => set({ weeklyHours: Number(e.target.value) })}
           />

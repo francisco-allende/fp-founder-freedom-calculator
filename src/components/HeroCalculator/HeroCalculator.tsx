@@ -53,6 +53,7 @@ export function HeroCalculator() {
           max={MAX_TASK_HOURS}
           step={HOURS_STEP * 2}
           value={hours}
+          style={{ ['--pct' as string]: `${(hours / MAX_TASK_HOURS) * 100}%` }}
           aria-valuetext={`${formatHours(hours)} hours a week`}
           onChange={(e) => setHours(Number(e.target.value))}
         />
