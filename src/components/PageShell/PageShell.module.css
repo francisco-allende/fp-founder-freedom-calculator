@@ -1,0 +1,31 @@
+.header {
+  background: var(--forest);
+  padding: var(--space-4) 0;
+}
+
+.inner {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.brand {
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.main {
+  display: grid;
+  gap: var(--space-7);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-8);
+  max-width: 48rem;
+  min-height: 60vh;
+}
+
+.wide {
+  max-width: 72rem;
+}

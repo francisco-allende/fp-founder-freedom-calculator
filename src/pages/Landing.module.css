@@ -1,0 +1,267 @@
+.inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+/* Hero: the only bold block on the page. */
+.hero {
+  background: var(--forest);
+  color: var(--white);
+  padding: var(--space-7) 0 var(--space-8);
+}
+
+.heroGrid {
+  display: grid;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+@media (min-width: 960px) {
+  .heroGrid {
+    grid-template-columns: 1.1fr 1fr;
+  }
+}
+
+.heroText {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+}
+
+.title {
+  font-size: var(--fs-39);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+
+@media (min-width: 720px) {
+  .title {
+    font-size: var(--fs-61);
+  }
+}
+
+.subtitle {
+  font-size: var(--fs-20);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.proof {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--fs-14);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.proof li {
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--emerald);
+}
+
+/* Sections: full-bleed, no radius, no shadows. */
+.section {
+  padding: var(--space-8) 0;
+}
+
+.section h2 {
+  margin-bottom: var(--space-5);
+  max-width: 24ch;
+}
+
+.white {
+  background: var(--white);
+}
+
+.dark {
+  background: var(--forest);
+  color: var(--white);
+}
+
+.lead {
+  font-size: var(--fs-20);
+}
+
+.pains {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4) var(--space-6);
+}
+
+@media (min-width: 720px) {
+  .pains {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pains li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.pct {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-31);
+  color: var(--amber-strong);
+  min-width: 4.2ch;
+}
+
+.close {
+  margin-top: var(--space-6);
+  font-size: var(--fs-20);
+  font-weight: 600;
+}
+
+.inside {
+  display: grid;
+  gap: var(--space-5) var(--space-6);
+  margin: 0;
+}
+
+@media (min-width: 720px) {
+  .inside {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.inside dt {
+  font-weight: 600;
+  padding-top: var(--space-3);
+  border-top: 3px solid var(--emerald);
+}
+
+.inside dd {
+  margin: var(--space-2) 0 0;
+  color: var(--slate);
+}
+
+.personas {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 720px) {
+  .personas {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.personas li {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--amber);
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 720px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.steps li {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+
+.stepNum {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-49);
+  line-height: 1;
+  color: var(--emerald-strong);
+}
+
+.quotes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 720px) {
+  .quotes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.quotes figure {
+  margin: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.quotes blockquote {
+  margin: 0;
+  font-size: var(--fs-20);
+  line-height: 1.45;
+}
+
+.quotes figcaption {
+  font-size: var(--fs-14);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.numbers {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: var(--space-5) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  display: grid;
+  gap: var(--space-3) var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.faq {
+  max-width: var(--measure);
+}
+
+.faq details {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: var(--space-4) 0;
+  min-height: 44px;
+}
+
+.faq details p {
+  padding-bottom: var(--space-4);
+  color: var(--slate);
+}
+
+.final {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.final h2 {
+  margin-bottom: 0;
+}

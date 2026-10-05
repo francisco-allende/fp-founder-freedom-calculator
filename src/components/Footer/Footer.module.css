@@ -1,0 +1,19 @@
+.footer {
+  background: var(--forest);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--fs-14);
+}
+
+.inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.footer a {
+  color: var(--white);
+}
