@@ -172,6 +172,8 @@ export const WIZARD = {
     year: 'what it costs you each year',
     gate: 'Your full report and 90-day plan are ready. Where should we send them?',
     blurredLabel: 'Preview of your 90-day plan and task map',
+    locked: 'Your 90-day plan and task map unlock with your report',
+    lockedAction: 'Go to the form',
     formMissing: 'The form is not configured yet. Set VITE_GHL_FORM_ID to show it here.',
     continue: 'Continue to my report',
     sentHint: 'Sent it? Continue here if the page does not move on by itself.',

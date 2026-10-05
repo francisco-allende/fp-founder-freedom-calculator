@@ -133,11 +133,12 @@ export const REPORT = {
     handOff: 'Hand off',
     approval: 'Hand off with approval',
     empty: 'Nothing here.',
+    keepEmpty: 'Everything you listed can be handed off. The strategic work is already yours.',
   },
   roadmap: {
     heading: 'Your 90-day handoff plan',
     phases: ['Weeks 1–2: quick wins', 'Month 1', 'Months 2–3'],
-    hours: (h: string) => `${h} h/week`,
+    hours: (h: string) => `${h} h/wk`,
     empty: 'Nothing left for this phase.',
   },
   calendar: { heading: 'Your calendar X-ray' },
