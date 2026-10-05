@@ -8,6 +8,7 @@ const Next = lazy(() => import('./pages/Next'));
 const Book = lazy(() => import('./pages/Book'));
 const Thanks = lazy(() => import('./pages/Thanks'));
 const Report = lazy(() => import('./pages/Report'));
+const Privacy = lazy(() => import('./pages/Privacy'));
 
 function UtmCapture() {
   const { search } = useLocation();
@@ -29,6 +30,7 @@ export function AppRoutes() {
           <Route path="/book" element={<Book />} />
           <Route path="/thanks" element={<Thanks />} />
           <Route path="/report" element={<Report />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<Landing />} />
         </Routes>
       </Suspense>

@@ -1,0 +1,65 @@
+/* Shared by /book, /thanks and /privacy. */
+
+.section {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.h2 {
+  font-size: var(--fs-20);
+  margin-bottom: var(--space-2);
+}
+
+.tasks,
+.steps {
+  margin: 0;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.tasks li {
+  font-weight: 600;
+}
+
+.wins {
+  margin: var(--space-3) 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.wins li {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.tip {
+  font-size: var(--fs-14);
+  color: var(--slate);
+}
+
+.calendar {
+  width: 100%;
+  min-height: 720px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: var(--white);
+}
+
+.note {
+  padding: var(--space-4) var(--space-5);
+  background: var(--white);
+  border-left: 4px solid var(--emerald);
+}
+
+
+.guarantee {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--white);
+  border-radius: var(--radius-control);
+  width: 100%;
+}
