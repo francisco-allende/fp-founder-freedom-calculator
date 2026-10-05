@@ -1,0 +1,28 @@
+.wrap {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.frame {
+  width: 100%;
+  min-height: 720px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: var(--white);
+}
+
+.missing,
+.continue {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-5);
+  background: var(--white);
+  border-left: 4px solid var(--emerald);
+}
+
+.missing,
+.continue {
+  color: var(--ink);
+  border-radius: var(--radius-control);
+}

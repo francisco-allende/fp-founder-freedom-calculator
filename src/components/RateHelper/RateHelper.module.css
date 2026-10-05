@@ -1,0 +1,34 @@
+.details summary {
+  cursor: pointer;
+  color: var(--emerald-strong);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.body {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-4);
+  margin-top: var(--space-2);
+  background: var(--surface);
+  border-left: 4px solid var(--emerald);
+}
+
+.money {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.money input {
+  min-height: 48px;
+  width: 12rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--slate);
+  border-radius: var(--radius-control);
+  background: var(--white);
+}

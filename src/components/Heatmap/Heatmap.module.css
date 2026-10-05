@@ -1,0 +1,40 @@
+.wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 2px;
+  width: 100%;
+  min-width: 20rem;
+  table-layout: fixed;
+  font-size: 0.75rem;
+}
+
+.caption {
+  text-align: left;
+  font-size: var(--fs-14);
+  color: var(--slate);
+  padding-bottom: var(--space-2);
+}
+
+.hour {
+  font-weight: 400;
+  color: var(--slate);
+  text-align: left;
+  height: 1.2em;
+}
+
+.day {
+  font-weight: 600;
+  text-align: left;
+  width: 2.6rem;
+}
+
+.cell {
+  height: 1.4rem;
+  border-radius: var(--radius-cell);
+  /* Amber = booked time, scaled by minutes; empty slots stay light. */
+  background: color-mix(in srgb, var(--amber) calc(var(--fill) * 100%), #dfe9e4);
+}

@@ -1,0 +1,87 @@
+/* Mobile: bottom sheet pinned to the viewport. Desktop: sticky sidebar. */
+.panel {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: var(--space-3) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom));
+  background: var(--forest);
+  color: var(--white);
+  box-shadow: 0 -8px 24px rgba(14, 42, 34, 0.18);
+}
+
+.label {
+  font-size: var(--fs-14);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.big {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-39);
+  line-height: 1;
+  color: var(--emerald);
+  letter-spacing: -0.02em;
+}
+
+.unit {
+  font-size: var(--fs-16);
+}
+
+.details {
+  display: none;
+}
+
+.range,
+.cost {
+  font-size: var(--fs-14);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cells {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  margin-top: var(--space-4);
+}
+
+.cells span {
+  aspect-ratio: 1;
+  border-radius: var(--radius-cell);
+}
+
+.handed {
+  background: var(--emerald);
+}
+
+.leak {
+  background: var(--amber);
+}
+
+@media (min-width: 960px) {
+  .panel {
+    position: sticky;
+    top: var(--space-5);
+    bottom: auto;
+    margin: 0;
+    padding: var(--space-5);
+    border-radius: var(--radius-control);
+    box-shadow: none;
+  }
+
+  .big {
+    font-size: var(--fs-61);
+  }
+
+  .details {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+}

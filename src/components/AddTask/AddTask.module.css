@@ -1,0 +1,25 @@
+.form {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  border: 1px dashed var(--slate);
+  border-radius: var(--radius-control);
+}
+
+.heading {
+  margin-bottom: var(--space-3);
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.input {
+  flex: 1 1 14rem;
+  min-height: 48px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--slate);
+  border-radius: var(--radius-control);
+  background: var(--white);
+}
