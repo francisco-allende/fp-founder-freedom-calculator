@@ -5,6 +5,8 @@ import type { Utm } from './utm';
 
 export const GHL_FORM_BASE = 'https://api.leadconnectorhq.com/widget/form/';
 export const GHL_BOOKING_BASE = 'https://api.leadconnectorhq.com/widget/booking/';
+/** Full-page version of the Matching Call scheduler (fallback link under the embed on /book). */
+export const GHL_BOOKING_FULLSCREEN = 'https://api.leadconnectorhq.com/widget/bookings/fp-francisco-allende-matching';
 export const GHL_EMBED_SCRIPT = 'https://link.msgsndr.com/js/form_embed.js';
 /** Origins a GHL iframe can post messages from. */
 export const GHL_ORIGIN_PATTERN = /^https:\/\/([a-z0-9-]+\.)*(leadconnectorhq\.com|msgsndr\.com)$/i;

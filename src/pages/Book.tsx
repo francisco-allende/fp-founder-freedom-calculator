@@ -8,7 +8,7 @@ import { GUARANTEES } from '../data/copy';
 import { BOOK } from '../data/pageCopy';
 import { topTaskNames } from '../engine/math';
 import { prefersReducedMotion } from '../hooks/useAnimatedNumber';
-import { buildBookingSrc } from '../lib/ghl';
+import { buildBookingSrc, GHL_BOOKING_FULLSCREEN } from '../lib/ghl';
 import { runEmbedScript } from '../lib/ghlEmbed';
 import { readCompletedRun } from '../lib/session';
 import { reportFromRun } from '../report/model';
@@ -70,6 +70,13 @@ export default function Book() {
           ) : (
             <p>{BOOK.calendarMissing}</p>
           )}
+          <p className={styles.fallback}>
+            {BOOK.fallbackLead}{' '}
+            <a href={GHL_BOOKING_FULLSCREEN} target="_blank" rel="noopener noreferrer">
+              {BOOK.fallbackLink}
+              <span className="visually-hidden"> (opens in a new tab)</span>
+            </a>
+          </p>
         </section>
 
         <section className={styles.card} aria-labelledby="book-call">
