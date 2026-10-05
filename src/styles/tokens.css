@@ -1,0 +1,42 @@
+/* Design tokens (SPEC §8). Pareto emerald kept; the rest chosen for this brief. */
+:root {
+  --forest: #0e2a22;
+  --emerald: #10b981;
+  --emerald-strong: #047857; /* text/borders on light backgrounds (AA contrast) */
+  --amber: #e39b2d;
+  --amber-strong: #9a5b08; /* text on light backgrounds (AA contrast) */
+  --mist: #eef4f1;
+  --ink: #14211c;
+  --slate: #5b6b64;
+  --white: #ffffff;
+  --line: #cfdcd5;
+  --surface: #f8fbf9;
+
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /* 1.25 scale */
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-20: 1.25rem;
+  --fs-25: 1.5625rem;
+  --fs-31: 1.9375rem;
+  --fs-39: 2.4375rem;
+  --fs-49: 3.0625rem;
+  --fs-61: 3.8125rem;
+
+  --radius-control: 14px;
+  --radius-cell: 4px;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --measure: 70ch;
+  --gutter: 16px;
+}
