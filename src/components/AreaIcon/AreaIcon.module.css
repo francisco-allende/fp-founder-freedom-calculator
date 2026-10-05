@@ -1,0 +1,13 @@
+.light,
+.dark {
+  flex-shrink: 0;
+  vertical-align: -0.2em;
+}
+
+.light {
+  color: var(--forest);
+}
+
+.dark {
+  color: var(--emerald);
+}

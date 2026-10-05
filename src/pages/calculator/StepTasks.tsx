@@ -1,4 +1,5 @@
 import { AddTask } from '../../components/AddTask/AddTask';
+import { AreaIcon } from '../../components/AreaIcon/AreaIcon';
 import { Button } from '../../components/Button/Button';
 import { StepHeading } from '../../components/StepHeading/StepHeading';
 import { TaskRow } from '../../components/TaskRow/TaskRow';
@@ -22,7 +23,10 @@ export function StepTasks({ state, dispatch, results, go, focusHeading }: StepPr
       <div className={styles.areas}>
         {LIBRARY_AREAS.map((area, i) => (
           <section key={area} className={styles.area} aria-labelledby={`area-${i}`}>
-            <h2 id={`area-${i}`}>{area}</h2>
+            <h2 id={`area-${i}`} className={styles.areaHeading}>
+              <AreaIcon area={area} />
+              {area}
+            </h2>
             <ul className={styles.list}>
               {TASKS.filter((d) => d.area === area).map((def) => {
                 const s = state.tasks[def.id]!;
@@ -46,7 +50,10 @@ export function StepTasks({ state, dispatch, results, go, focusHeading }: StepPr
 
         {state.custom.length > 0 && (
           <section className={styles.area} aria-labelledby="area-custom">
-            <h2 id="area-custom">Your own tasks</h2>
+            <h2 id="area-custom" className={styles.areaHeading}>
+              <AreaIcon area="Your own tasks" />
+              Your own tasks
+            </h2>
             <ul className={styles.list}>
               {state.custom.map((c) => (
                 <TaskRow

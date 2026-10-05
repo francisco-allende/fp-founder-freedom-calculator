@@ -5,17 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run test:stats && tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "test:stats": "vitest run --reporter=default --reporter=json --outputFile.json=src/generated/test-stats.json"
   },
   "dependencies": {
     "@react-pdf/renderer": "4.9.0",
     "fflate": "0.8.3",
     "ical.js": "2.2.1",
+    "lucide-react": "1.52.0",
     "lz-string": "1.5.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
