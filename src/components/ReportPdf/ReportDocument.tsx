@@ -1,36 +1,58 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Font, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { BRAND, FOOTNOTE } from '../../data/copy';
 import { REPORT } from '../../data/pageCopy';
 import { formatHours, formatMultiple } from '../../engine/format';
 import type { RoadmapItem } from '../../engine/roadmap';
-import type { ReportModel } from '../../report/model';
-import { METHOD_ITEMS } from '../../report/method';
 import { hoursRange, moneyRange } from '../../lib/display';
+import { METHOD_ITEMS } from '../../report/method';
+import type { ReportModel } from '../../report/model';
+import { PdfAreaIcon } from './pdfIcons';
 
 // Loaded only when someone clicks "Download PDF" (SPEC §10). Built-in Helvetica keeps text selectable.
+// Same rounding as the site (design rule 7): whole-hour ranges, compact money; task rows keep one decimal.
+
+// Never break words with hyphens (react-pdf hyphenates English by default: 'meet-ings').
+Font.registerHyphenationCallback((word) => [word]);
 
 const C = { forest: '#0E2A22', emerald: '#10B981', emeraldText: '#047857', amber: '#E39B2D', ink: '#14211C', slate: '#5B6B64', line: '#CFDCD5', mist: '#EEF4F1' };
 
 const s = StyleSheet.create({
-  page: { padding: 40, fontFamily: 'Helvetica', fontSize: 10, color: C.ink, lineHeight: 1.45 },
+  page: { padding: 40, paddingBottom: 56, fontFamily: 'Helvetica', fontSize: 10, color: C.ink, lineHeight: 1.45 },
   band: { backgroundColor: C.forest, color: '#FFFFFF', marginHorizontal: -40, marginTop: -40, padding: 40, paddingBottom: 24, marginBottom: 20 },
   brand: { fontSize: 9, color: '#BFD9CF', marginBottom: 6 },
-  h1: { fontSize: 22, fontFamily: 'Helvetica-Bold' },
+  h1: { fontSize: 22, fontFamily: 'Helvetica-Bold', lineHeight: 1.2 },
   h2: { fontSize: 13, fontFamily: 'Helvetica-Bold', marginTop: 18, marginBottom: 8 },
   h3: { fontSize: 10.5, fontFamily: 'Helvetica-Bold', marginBottom: 4 },
   row: { flexDirection: 'row', gap: 16 },
   stat: { flex: 1, borderTopWidth: 2, borderTopColor: C.emerald, paddingTop: 6 },
-  statValue: { fontSize: 15, fontFamily: 'Helvetica-Bold' },
+  statLead: { flex: 1.3, borderTopWidth: 2, borderTopColor: C.emerald, paddingTop: 6 },
+  // Big figures need their own line height, or they overlap the label below.
+  statValue: { fontSize: 15, fontFamily: 'Helvetica-Bold', lineHeight: 1.2, marginBottom: 2 },
+  statValueLead: { fontSize: 22, fontFamily: 'Helvetica-Bold', color: C.emeraldText, lineHeight: 1.2, marginBottom: 2 },
   statLabel: { fontSize: 8.5, color: C.slate },
   muted: { color: C.slate },
   small: { fontSize: 8.5, color: C.slate },
   barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
-  barLabel: { width: 130, fontSize: 9 },
+  barLabel: { width: 140, flexDirection: 'row', alignItems: 'center' },
+  barLabelText: { fontSize: 9 },
   barTrack: { flex: 1, flexDirection: 'row', height: 9 },
   barValue: { width: 70, fontSize: 8.5, color: C.slate, textAlign: 'right' },
   col: { flex: 1 },
+  mapItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
+  keepEmpty: { color: C.forest, fontSize: 9.5 },
   item: { marginBottom: 7 },
-  phase: { borderLeftWidth: 3, borderLeftColor: C.emerald, paddingLeft: 10, marginBottom: 12 },
+  // 3-stage plan
+  stages: { flexDirection: 'row', gap: 14 },
+  stage: { flex: 1 },
+  track: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  dot: { width: 20, height: 20, borderRadius: 10, backgroundColor: C.forest, justifyContent: 'center', alignItems: 'center' },
+  dotText: { color: C.emerald, fontFamily: 'Helvetica-Bold', fontSize: 9.5 },
+  line: { flex: 1, height: 2, backgroundColor: C.emerald, marginLeft: 4, marginRight: -14 },
+  task: { marginBottom: 8 },
+  taskName: { fontFamily: 'Helvetica-Bold', fontSize: 9.5 },
+  pill: { alignSelf: 'flex-start', backgroundColor: C.mist, borderRadius: 8, paddingHorizontal: 5, paddingVertical: 1, marginTop: 2 },
+  pillText: { fontSize: 8, color: C.forest, fontFamily: 'Helvetica-Bold' },
+  ctaBox: { borderLeftWidth: 3, borderLeftColor: C.emerald, paddingLeft: 10, marginTop: 12 },
   footer: { position: 'absolute', bottom: 24, left: 40, right: 40, fontSize: 8, color: C.slate, flexDirection: 'row', justifyContent: 'space-between' },
 });
 
@@ -43,18 +65,28 @@ function Footer() {
   );
 }
 
-function Phase({ title, items }: { title: string; items: RoadmapItem[] }) {
+/** One stage of the plan: numbered dot on the connecting line, title, tasks with h/wk pills. */
+function Stage({ n, title, items, last }: { n: number; title: string; items: RoadmapItem[]; last?: boolean }) {
   return (
-    <View style={s.phase} wrap={false}>
+    <View style={s.stage}>
+      <View style={s.track}>
+        <View style={s.dot}>
+          <Text style={s.dotText}>{n}</Text>
+        </View>
+        {!last && <View style={s.line} />}
+      </View>
       <Text style={s.h3}>{title}</Text>
       {items.length === 0 ? (
-        <Text style={s.muted}>{REPORT.roadmap.empty}</Text>
+        <Text style={s.small}>{REPORT.roadmap.empty}</Text>
       ) : (
         items.map((i) => (
-          <View key={i.taskId || i.name} style={s.item}>
-            <Text>
-              {i.kind === 'setup' ? i.name : `${i.name} · ${REPORT.roadmap.hours(formatHours(i.hours))}`}
-            </Text>
+          <View key={i.taskId || i.name} style={s.task}>
+            <Text style={i.kind === 'task' ? s.taskName : undefined}>{i.name}</Text>
+            {i.kind === 'task' && (
+              <View style={s.pill}>
+                <Text style={s.pillText}>{REPORT.roadmap.hours(formatHours(i.hours))}</Text>
+              </View>
+            )}
             {i.kind === 'task' && <Text style={s.small}>{i.tip}</Text>}
           </View>
         ))
@@ -77,22 +109,16 @@ export function ReportDocument({ model }: { model: ReportModel }) {
         </View>
 
         <View style={s.row}>
-          <View style={s.stat}>
-            <Text style={s.statValue}>
-              {hoursRange(results.hours.low, results.hours.realistic)}
-            </Text>
+          <View style={s.statLead}>
+            <Text style={s.statValueLead}>{hoursRange(results.hours.low, results.hours.realistic)}</Text>
             <Text style={s.statLabel}>{REPORT.summary.hours}</Text>
           </View>
           <View style={s.stat}>
-            <Text style={s.statValue}>
-              {moneyRange(results.monthly.low, results.monthly.realistic)}
-            </Text>
+            <Text style={s.statValue}>{moneyRange(results.monthly.low, results.monthly.realistic)}</Text>
             <Text style={s.statLabel}>{REPORT.summary.month}</Text>
           </View>
           <View style={s.stat}>
-            <Text style={s.statValue}>
-              {moneyRange(results.annual.low, results.annual.realistic)}
-            </Text>
+            <Text style={s.statValue}>{moneyRange(results.annual.low, results.annual.realistic)}</Text>
             <Text style={s.statLabel}>{REPORT.summary.year}</Text>
           </View>
         </View>
@@ -101,7 +127,10 @@ export function ReportDocument({ model }: { model: ReportModel }) {
         <Text style={s.h2}>{REPORT.weekChart.heading}</Text>
         {byArea.map((a) => (
           <View key={a.area} style={s.barRow}>
-            <Text style={s.barLabel}>{a.area}</Text>
+            <View style={s.barLabel}>
+              <PdfAreaIcon area={a.area} />
+              <Text style={s.barLabelText}>{a.area}</Text>
+            </View>
             <View style={s.barTrack}>
               <View style={{ width: `${(a.delegable / maxTotal) * 100}%`, backgroundColor: C.emerald }} />
               <View style={{ width: `${(a.kept / maxTotal) * 100}%`, backgroundColor: C.amber, marginLeft: 1 }} />
@@ -119,14 +148,23 @@ export function ReportDocument({ model }: { model: ReportModel }) {
         <View style={s.row}>
           {(
             [
-              [REPORT.map.handOff, map.handOff],
-              [REPORT.map.approval, map.handOffWithApproval],
-              [REPORT.map.keep, map.keep],
+              [REPORT.map.handOff, map.handOff, false],
+              [REPORT.map.approval, map.handOffWithApproval, false],
+              [REPORT.map.keep, map.keep, true],
             ] as const
-          ).map(([title, list]) => (
+          ).map(([title, list, isKeep]) => (
             <View key={title} style={s.col}>
               <Text style={s.h3}>{title}</Text>
-              {list.length === 0 ? <Text style={s.muted}>{REPORT.map.empty}</Text> : list.map((t) => <Text key={t.id}>{t.name}</Text>)}
+              {list.length === 0 ? (
+                <Text style={isKeep ? s.keepEmpty : s.muted}>{isKeep ? REPORT.map.keepEmpty : REPORT.map.empty}</Text>
+              ) : (
+                list.map((t) => (
+                  <View key={t.id} style={s.mapItem}>
+                    <PdfAreaIcon area={t.area} size={9} />
+                    <Text>{t.name}</Text>
+                  </View>
+                ))
+              )}
             </View>
           ))}
         </View>
@@ -135,15 +173,18 @@ export function ReportDocument({ model }: { model: ReportModel }) {
 
       <Page size="LETTER" style={s.page}>
         <Text style={[s.h2, { marginTop: 0 }]}>{REPORT.roadmap.heading}</Text>
-        <Phase title={`1. ${p1}`} items={roadmap.weeks1to2} />
-        <Phase title={`2. ${p2}`} items={roadmap.month1} />
-        <Phase title={`3. ${p3}`} items={roadmap.months2to3} />
+        <View style={s.stages}>
+          <Stage n={1} title={p1} items={roadmap.weeks1to2} />
+          <Stage n={2} title={p2} items={roadmap.month1} />
+          <Stage n={3} title={p3} items={roadmap.months2to3} last />
+        </View>
 
         {calendar && (
           <View wrap={false}>
             <Text style={s.h2}>{REPORT.calendar.heading}</Text>
             <Text>
-              {formatHours(calendar.meetingHoursPerWeek)} hours of meetings a week · {formatHours(calendar.focusBlocksPerWeek)} focus blocks of 90+ minutes · {formatHours(calendar.fragmentedHoursPerWeek)} hours lost to gaps under 30 minutes
+              {formatHours(calendar.meetingHoursPerWeek)} hours of meetings a week · {formatHours(calendar.focusBlocksPerWeek)} focus blocks of 90+
+              minutes · {formatHours(calendar.fragmentedHoursPerWeek)} hours lost to gaps under 30 minutes
             </Text>
           </View>
         )}
@@ -156,7 +197,7 @@ export function ReportDocument({ model }: { model: ReportModel }) {
           </View>
         ))}
 
-        <View style={[s.phase, { marginTop: 12 }]} wrap={false}>
+        <View style={s.ctaBox} wrap={false}>
           <Text style={s.h3}>{REPORT.cta.heading}</Text>
           <Text>
             Your hours are worth {formatMultiple(results.roiMultiple)} the $3,000/mo annual plan. {REPORT.cta.text}

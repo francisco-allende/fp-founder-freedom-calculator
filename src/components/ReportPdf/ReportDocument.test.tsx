@@ -31,3 +31,15 @@ describe('ReportDocument (PDF)', () => {
     }
   }, 30_000);
 });
+
+describe('PDF area icons', () => {
+  it('every area resolves to lucide vector data (no silent fallback to dots)', async () => {
+    const { iconNode } = await import('./pdfIcons');
+    const { AREA_ICONS } = await import('../AreaIcon/AreaIcon');
+    for (const area of Object.keys(AREA_ICONS) as (keyof typeof AREA_ICONS)[]) {
+      const node = iconNode(area);
+      expect(node, area).not.toBeNull();
+      expect(node!.every(([tag]) => ['path', 'polyline', 'circle', 'rect', 'line'].includes(tag)), area).toBe(true);
+    }
+  });
+});
