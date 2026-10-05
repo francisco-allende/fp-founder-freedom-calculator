@@ -3,8 +3,16 @@
   border-bottom: 1px solid var(--line);
 }
 
-.off .name {
-  color: var(--slate);
+.name,
+.sliders,
+.badge {
+  transition: opacity 150ms ease-out;
+}
+
+.off .name,
+.off .sliders,
+.off .badge {
+  opacity: 0.4;
 }
 
 .head {
@@ -71,9 +79,16 @@
   grid-column: 1 / -1;
 }
 
+/* Current value in a small pill next to each slider. */
 .value {
   font-weight: 600;
-  color: var(--ink);
+  color: var(--forest);
+  background: var(--mist);
+  border-radius: 999px;
+  padding: 1px var(--space-3);
+  min-width: 3.75rem;
+  text-align: center;
+  white-space: nowrap;
 }
 
 @media (min-width: 37.5rem) {

@@ -40,8 +40,8 @@ export function TaskRow({ name, hours, pct, needsApproval, selected = true, onTo
         )}
       </div>
 
-      {selected && (
-        <div className={styles.sliders}>
+      {/* Unchecked: controls stay in place, faded and disabled, so nothing jumps. */}
+      <div className={styles.sliders} aria-disabled={!selected || undefined}>
           <div className={styles.slider}>
             <label htmlFor={`${id}-h`}>{t.hours}</label>
             <span className={`num ${styles.value}`} aria-hidden="true">
@@ -55,6 +55,7 @@ export function TaskRow({ name, hours, pct, needsApproval, selected = true, onTo
               step={HOURS_STEP}
               value={hours}
               aria-valuetext={`${formatHours(hours)} hours per week`}
+              disabled={!selected}
               onChange={(e) => onHours(Number(e.target.value))}
             />
           </div>
@@ -71,11 +72,11 @@ export function TaskRow({ name, hours, pct, needsApproval, selected = true, onTo
               step={5}
               value={pct}
               aria-valuetext={`${pct} percent`}
+              disabled={!selected}
               onChange={(e) => onPct(Number(e.target.value))}
             />
           </div>
-        </div>
-      )}
+      </div>
     </li>
   );
 }
