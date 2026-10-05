@@ -35,7 +35,7 @@ export default function Calculator() {
           <Link to="/" className={styles.brand}>
             {BRAND.title}
           </Link>
-          <ProgressBar steps={WIZARD.steps} current={state.step} />
+          <ProgressBar steps={WIZARD.steps} current={state.step} onStep={(n) => go(n as Step)} />
         </div>
       </header>
       <main className={`${styles.inner} ${styles.main} ${withTotal ? styles.withTotal : ''}`}>
@@ -45,7 +45,7 @@ export default function Calculator() {
           {state.step === 3 && <StepCalendar {...props} />}
           {state.step === 4 && <StepPreview {...props} />}
         </div>
-        {withTotal && <LiveTotal results={results} />}
+        {withTotal && <LiveTotal results={results} weeklyHours={state.about.weeklyHours} />}
       </main>
       <Footer />
     </div>

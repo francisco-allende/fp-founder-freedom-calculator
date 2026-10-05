@@ -49,3 +49,35 @@
     white-space: nowrap;
   }
 }
+
+.marker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.25rem;
+}
+
+.done .marker {
+  color: var(--emerald);
+}
+
+/* Completed steps are clickable: same look, plus an underline on hover/focus. */
+.back {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-height: 2.75rem;
+}
+
+.back:hover .label,
+.back:focus-visible .label {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  color: var(--white);
+}
