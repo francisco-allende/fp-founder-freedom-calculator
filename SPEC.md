@@ -412,3 +412,10 @@ public/ og-image.png favicon.svg
 26. "Who it's for" uses real client quotes from the Second Brain instead of drafted descriptions.
 27. FAQ "What's a Right Hand?" uses Pareto's own framing (provided by Francisco). Open item: it says "top 1% of 1,000+ applicants", while §6 lists "1 in 1,000 applicants placed"; reconcile the two figures before launch.
 28. Privacy contact: franallende2000@gmail.com.
+
+**2026-10-05** (preview test fixes)
+29. Report links are URL-safe: lz-string's "+" and "$" are swapped for "_" and "." (unreserved, untouched by URLSearchParams and form-encoding), and links end with `&end=1` so linkifiers that trim trailing punctuation never cut the data. Decoding still accepts old links with "+"/spaces, wrapped lines and percent-encoding. Tests go through real `new URL(...).searchParams` parsing and email-client mangling.
+30. All 13 hidden fields are always sent and never empty (`fft_tier` = `none` when not qualified; UTMs default to `(direct)` / `(none)`). Number fields are plain digits (no `$`, commas or padded zeros). The fields are also mirrored onto the parent page URL while the form shows, because HighLevel's form_embed.js merges the parent URL's query into what it hands the form (UTM placeholders are not mirrored). `?debug=1` logs the exact iframe src and a table of the hidden fields.
+31. form_embed.js only wires up iframes present when it runs, so it is (re)run after each HighLevel iframe mounts.
+32. Booking and form iframes have no fixed height; form_embed.js auto-resizes them. Inside our page the booking widget reported a height of 0 in testing, so each iframe has a rem min-height sized to the widget's tallest state (booking: 90rem phones, 60rem from 40rem up; form: 60rem / 50rem) so the confirm/submit button is always reachable.
+33. Responsive rules: rem breakpoints (37.5 / 40 / 45 / 60rem), fluid containers, no fixed pixel layout widths; charts size their axes from their own width; data tables use fixed layout with wrapping headers. Audited at 375, 768, 1366, 1440, 1536 and 1920 px: no horizontal scroll, nothing clipped.
