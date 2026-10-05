@@ -1,11 +1,13 @@
 /* Page-level layout for /report. Shared sections (summary, task map, plan) live in src/report/sections.module.css. */
 
+/* Header row: title and Download PDF. Padding so the button (and its focus ring) is never clipped. */
 .top {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
+  padding-top: var(--space-4);
 }
 
 .section {
@@ -65,7 +67,15 @@
 
 .pdf {
   display: grid;
-  justify-items: end;
+  justify-items: start;
+  gap: var(--space-1);
+  padding-block: var(--space-1);
+}
+
+@media (min-width: 45rem) {
+  .pdf {
+    justify-items: end;
+  }
 }
 
 .error {

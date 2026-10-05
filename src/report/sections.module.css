@@ -87,6 +87,7 @@
   border-color: var(--amber);
 }
 
+/* 90-day plan: three connected stages. Horizontal from 60rem, vertical (line on the left) below. */
 .timeline {
   list-style: none;
   margin: 0;
@@ -95,21 +96,52 @@
   gap: var(--space-5);
 }
 
-@media (min-width: 60rem) {
-  .timeline {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.phase {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  /* Stages share the tallest row height; keep content at the top so titles line up. */
+  align-content: start;
 }
 
-.phase {
+/* Connecting line (vertical on mobile). */
+.phase:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: calc(1.125rem - 1px);
+  top: 2.25rem;
+  bottom: calc(var(--space-5) * -1);
+  width: 2px;
+  background: var(--emerald);
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--forest);
+  color: var(--emerald);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.phaseBody {
   display: grid;
   gap: var(--space-3);
-  align-content: start;
-  padding-top: var(--space-3);
-  border-top: 4px solid var(--emerald);
+  min-width: 0;
 }
 
-.phase ul {
+.phaseBody h3 {
+  line-height: 2.25rem;
+}
+
+.phaseBody ul {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -117,16 +149,64 @@
   gap: var(--space-4);
 }
 
-.phaseNum {
-  font-variant-numeric: tabular-nums;
-  color: var(--emerald-strong);
+@media (min-width: 60rem) {
+  .timeline {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+
+  .phase {
+    grid-template-columns: 1fr;
+  }
+
+  /* Horizontal line from this dot to the next one. */
+  .phase:not(:last-child)::before {
+    left: 2.25rem;
+    right: calc(var(--space-5) * -1);
+    top: calc(1.125rem - 1px);
+    bottom: auto;
+    width: auto;
+    height: 2px;
+  }
+
+  .phaseBody h3 {
+    line-height: 1.2;
+  }
 }
 
 .itemName {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
   font-weight: 600;
+}
+
+/* Per-task hours never wrap. */
+.pill {
+  font-size: var(--fs-14);
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  background: var(--mist);
+  color: var(--forest);
 }
 
 .tip {
   font-size: var(--fs-14);
   color: var(--slate);
+}
+
+.keepEmpty {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  color: var(--forest);
+}
+
+.keepEmpty svg {
+  flex-shrink: 0;
+  color: var(--emerald-strong);
+  margin-top: 2px;
 }

@@ -1,3 +1,4 @@
+import { Target } from 'lucide-react';
 import { AreaIcon } from '../components/AreaIcon/AreaIcon';
 import { REPORT } from '../data/pageCopy';
 import { formatHours } from '../engine/format';
@@ -45,7 +46,13 @@ export function TaskMapColumns({ map }: { map: Record<TaskMapBucket, TaskInput[]
       {columns.map(([title, list, cls]) => (
         <div key={title} className={cls}>
           <h3>{title}</h3>
-          {list.length === 0 ? (
+          {list.length === 0 && cls === styles.colKeep ? (
+            // Nothing has to stay with the founder: say so as good news, not as an empty list.
+            <p className={styles.keepEmpty}>
+              <Target size={20} strokeWidth={1.5} aria-hidden="true" />
+              <span>{REPORT.map.keepEmpty}</span>
+            </p>
+          ) : list.length === 0 ? (
             <p className={styles.muted}>{REPORT.map.empty}</p>
           ) : (
             <ul>
@@ -67,27 +74,28 @@ function Phase({ n, title, items, limit }: { n: number; title: string; items: Ro
   const shown = limit ? items.slice(0, limit) : items;
   return (
     <li className={styles.phase}>
-      <h3>
-        <span className={styles.phaseNum} aria-hidden="true">
-          {n}
-        </span>{' '}
-        {title}
-      </h3>
-      {shown.length === 0 ? (
-        <p className={styles.muted}>{REPORT.roadmap.empty}</p>
-      ) : (
-        <ul>
-          {shown.map((i) => (
-            <li key={i.taskId || i.name}>
-              <p className={styles.itemName}>
-                {i.name}
-                {i.kind === 'task' && <span className={`num ${styles.muted}`}> · {REPORT.roadmap.hours(formatHours(i.hours))}</span>}
-              </p>
-              {i.kind === 'task' && <p className={styles.tip}>{i.tip}</p>}
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* Stage marker: numbered dot on the connecting line. */}
+      <span className={styles.dot} aria-hidden="true">
+        {n}
+      </span>
+      <div className={styles.phaseBody}>
+        <h3>{title}</h3>
+        {shown.length === 0 ? (
+          <p className={styles.muted}>{REPORT.roadmap.empty}</p>
+        ) : (
+          <ul>
+            {shown.map((i) => (
+              <li key={i.taskId || i.name}>
+                <p className={styles.itemName}>
+                  <span>{i.name}</span>
+                  {i.kind === 'task' && <span className={`num ${styles.pill}`}>{REPORT.roadmap.hours(formatHours(i.hours))}</span>}
+                </p>
+                {i.kind === 'task' && <p className={styles.tip}>{i.tip}</p>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </li>
   );
 }
