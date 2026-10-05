@@ -45,7 +45,17 @@ export default function Calculator() {
           {state.step === 3 && <StepCalendar {...props} />}
           {state.step === 4 && <StepPreview {...props} />}
         </div>
-        {withTotal && <LiveTotal results={results} weeklyHours={state.about.weeklyHours} />}
+        {withTotal && (
+          <LiveTotal
+            results={results}
+            weeklyHours={state.about.weeklyHours}
+            action={
+              state.step === 2
+                ? { label: WIZARD.nav.barToCalendar, onClick: () => go(3) }
+                : { label: WIZARD.nav.barToResults, onClick: () => go(4) }
+            }
+          />
+        )}
       </main>
       <Footer />
     </div>

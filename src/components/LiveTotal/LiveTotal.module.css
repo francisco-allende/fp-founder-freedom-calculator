@@ -1,13 +1,6 @@
-/* Mobile: bottom sheet pinned to the viewport. Desktop: sticky sidebar. */
+/* Desktop (60rem+): sticky sidebar card. Below that the card hides and the fixed bar takes over. */
 .panel {
-  position: sticky;
-  bottom: 0;
-  z-index: 5;
-  margin-inline: calc(var(--gutter) * -1);
-  padding: var(--space-3) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom));
-  background: var(--forest);
-  color: var(--white);
-  box-shadow: 0 -8px 24px rgba(14, 42, 34, 0.18);
+  display: none;
 }
 
 .label {
@@ -36,7 +29,9 @@
 }
 
 .details {
-  display: none;
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
 }
 
 .range,
@@ -129,24 +124,139 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* Mobile bar: fixed to the bottom, safe-area aware, the only sticky element. */
+.bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--gutter) calc(var(--space-2) + env(safe-area-inset-bottom));
+  background: var(--forest);
+  color: var(--white);
+  box-shadow: 0 -8px 24px rgba(14, 42, 34, 0.18);
+  transition: transform 200ms ease-out;
+}
+
+/* Slides away once the footer is on screen. */
+.barHidden {
+  transform: translateY(110%);
+}
+
+.barSummary {
+  flex: 1;
+  min-width: 0;
+  min-height: 3rem;
+  display: grid;
+  justify-items: start;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.barLabel {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.barFigure {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-14);
+  white-space: nowrap;
+}
+
+.barBig {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 1.2rem + 1.5vw, var(--fs-31));
+  line-height: 1;
+  color: var(--emerald);
+}
+
+.barAction {
+  flex-shrink: 0;
+  min-height: 2.75rem;
+  padding-inline: var(--space-4);
+}
+
+/* Bottom sheet */
+.sheetLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: flex-end;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 42, 34, 0.55);
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-4) var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom));
+  background: var(--forest);
+  color: var(--white);
+  border-radius: var(--radius-control) var(--radius-control) 0 0;
+  /* No slide-in: visibility never depends on an animation finishing (design rule 8). */
+}
+
+.sheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.sheetTitle {
+  font-size: var(--fs-16);
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--white);
+  cursor: pointer;
+}
+
 @media (min-width: 60rem) {
   .panel {
+    display: block;
     position: sticky;
     top: var(--space-5);
-    bottom: auto;
-    margin: 0;
     padding: var(--space-5);
     border-radius: var(--radius-control);
-    box-shadow: none;
+    background: var(--forest);
+    color: var(--white);
   }
 
   .big {
     font-size: clamp(var(--fs-39), 2rem + 2vw, var(--fs-61));
   }
 
-  .details {
-    display: grid;
-    gap: var(--space-2);
-    margin-top: var(--space-3);
+  .bar,
+  .sheetLayer {
+    display: none;
   }
 }

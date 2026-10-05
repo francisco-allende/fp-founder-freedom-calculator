@@ -29,6 +29,11 @@
   padding-bottom: var(--space-7);
 }
 
+/* Phones: room for the fixed summary bar (its height is measured into --summary-bar-h). */
+.withTotal {
+  padding-bottom: calc(var(--space-7) + var(--summary-bar-h, 0px));
+}
+
 .content {
   min-width: 0;
   max-width: 46rem;
@@ -36,6 +41,7 @@
 
 @media (min-width: 60rem) {
   .withTotal {
+    padding-bottom: var(--space-7);
     display: grid;
     grid-template-columns: minmax(0, 1fr) 20rem;
     gap: var(--space-7);
