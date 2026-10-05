@@ -7,7 +7,10 @@ import { buildReportUrl, decodeReport, encodeReport, toReportCalendar } from '..
 import { sanitizeName } from '../sanitize';
 import type { ReportCalendar, ReportState } from '../types';
 
-const ORIGIN = 'https://founder-freedom-calculator.vercel.app';
+const ORIGIN = 'https://fp-founder-freedom-calculator.vercel.app';
+
+/** Undo the URL-safe swap and decompress, to inspect the raw wire JSON. */
+const wireJson = (d: string) => LZString.decompressFromEncodedURIComponent(d.replace(/_/g, '+').replace(/\./g, '$'));
 
 /** 23 library tasks + 2 custom tasks with 40-char names = 25 tasks. */
 function twentyFiveTasks() {
@@ -90,7 +93,7 @@ describe('test 6: report URL', () => {
   });
 
   it('never carries email, revenue or raw events', () => {
-    const json = LZString.decompressFromEncodedURIComponent(encodeReport(state(calendar(realisticHeatmap()))))!;
+    const json = wireJson(encodeReport(state(calendar(realisticHeatmap()))))!;
     expect(Object.keys(JSON.parse(json)).sort()).toEqual(['c', 'n', 'r', 't', 'v']);
     expect(json).not.toMatch(/@|revenue|email/i);
   });
@@ -102,7 +105,7 @@ describe('test 6: report URL', () => {
       tasks: [customTask('custom-0', '<img src=x onerror=alert(1)>Invoices\u202E\tfor   clients and a very long tail that goes on', 1, 0.5)],
       calendar: null,
     };
-    const json = JSON.parse(LZString.decompressFromEncodedURIComponent(encodeReport(dirty))!);
+    const json = JSON.parse(wireJson(encodeReport(dirty))!);
     expect(json.n).toBe('Fran');
     expect(json.t[0][0]).toBe('Invoices for clients and a very long tai'); // cut at exactly 40
     expect(json.t[0][0]).toHaveLength(40);
@@ -165,6 +168,73 @@ describe('test 6: report URL', () => {
     expect(decodeReport(LZString.compressToEncodedURIComponent('{not json'))).toBeNull();
     expect(decodeReport(LZString.compressToEncodedURIComponent('{"v":2}'))).toBeNull();
     expect(decodeReport(LZString.compressToEncodedURIComponent('[1,2]'))).toBeNull();
+  });
+});
+
+describe('report links survive real URLs and email clients', () => {
+  /** What the /report page does: parse the link and read ?d= with URLSearchParams. */
+  const dFrom = (link: string) => new URL(link).searchParams.get('d');
+
+  // Many shapes, so the compressed data is sure to hit every lz-string symbol.
+  const states = [
+    state(null),
+    state(calendar(realisticHeatmap())),
+    state(calendar(noisyHeatmap())),
+    state(null, 'José'),
+    // Custom task ids come from their position in the link, so renumber after reordering.
+    { ...state(null), tasks: twentyFiveTasks().reverse().map((t, i) => (t.custom ? { ...t, id: `custom-${i}` } : t)) },
+  ];
+
+  it('the encoded data never contains "+", "$" or anything URLSearchParams would rewrite', () => {
+    for (const s of states) {
+      const d = encodeReport(s);
+      expect(d).toMatch(/^[A-Za-z0-9_.-]+$/);
+      expect(new URLSearchParams(`d=${d}`).get('d')).toBe(d);
+    }
+  });
+
+  it('round-trips through a real URL: build link → new URL(...).searchParams.get("d") → decode', () => {
+    for (const s of states) {
+      const { url } = buildReportUrl(ORIGIN, s);
+      expect(url).toMatch(/&end=1$/);
+      expect(decodeReport(dFrom(url))).toEqual(s);
+    }
+  });
+
+  it('old links with "+" that arrived as spaces still decode', () => {
+    for (const s of states) {
+      const legacy = LZString.compressToEncodedURIComponent(wireJson(encodeReport(s))!);
+      expect(decodeReport(dFrom(`${ORIGIN}/report?d=${legacy}`))).toEqual(s);
+    }
+  });
+
+  it('a link pasted from an email client still decodes', () => {
+    const s = state(calendar(realisticHeatmap()));
+    const { url } = buildReportUrl(ORIGIN, s);
+    const d = dFrom(url)!;
+    const mid = Math.floor(d.length / 2);
+    const mangled = [
+      `${url}.`, // sentence punctuation glued to the link
+      `${url})`, // link in parentheses
+      ` ${url} `, // surrounding whitespace
+      url.replace(d, `${d.slice(0, mid)}\r\n${d.slice(mid)}`), // hard line wrap (URL parser strips it)
+      url.replace(d, `${d.slice(0, mid)}%20${d.slice(mid)}`), // wrap that became a space
+      url.replace(d, encodeURIComponent(d)), // fully percent-encoded by the client
+      url.replace(d, d.replace(/_/g, '%5F').replace(/\./g, '%2E')), // over-eager encoding
+      url.replace('&end=1', ''), // tracking or copy that dropped the terminator
+    ];
+    for (const link of mangled) {
+      expect(decodeReport(dFrom(link.trim())), link).toEqual(s);
+    }
+  });
+
+  it('a link run through HighLevel (hidden field → email merge) decodes', () => {
+    const s = state(calendar(realisticHeatmap()));
+    const { url } = buildReportUrl(ORIGIN, s);
+    // The app sends the URL as a query param; GHL stores the decoded value and prints it in the email.
+    const stored = new URLSearchParams(new URLSearchParams({ fft_report_url: url }).toString()).get('fft_report_url')!;
+    expect(stored).toBe(url);
+    expect(decodeReport(dFrom(stored))).toEqual(s);
   });
 });
 

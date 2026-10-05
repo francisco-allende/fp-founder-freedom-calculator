@@ -66,16 +66,27 @@ function toWire(state: ReportState, includeHeatmap: boolean): Wire {
   return { v: VERSION, n: sanitizeName(state.firstName), r: Math.min(MAX_RATE, nonNeg(state.rate)), t, c };
 }
 
+// lz-string's "URI" alphabet is A–Z a–z 0–9 plus "+", "-" and "$". A "+" turns into a space
+// when a query string is parsed (URLSearchParams, form decoding), which broke real links.
+// We swap "+" → "_" and "$" → "."; both are unreserved, survive form-encoding untouched,
+// and never appear in lz-string output, so the swap is reversible.
+const toUrlSafe = (s: string) => s.replace(/\+/g, '_').replace(/\$/g, '.');
+const fromUrlSafe = (s: string) => s.replace(/_/g, '+').replace(/\./g, '$');
+
 function compress(wire: Wire): string {
-  return LZString.compressToEncodedURIComponent(JSON.stringify(wire));
+  return toUrlSafe(LZString.compressToEncodedURIComponent(JSON.stringify(wire)));
 }
 
 export function encodeReport(state: ReportState, opts: { includeHeatmap?: boolean } = {}): string {
   return compress(toWire(state, opts.includeHeatmap ?? true));
 }
 
+/**
+ * `d` is never the last thing in the link: email linkifiers trim trailing punctuation
+ * (".", "_", "-"), which would eat the end of the data. `end=1` takes that hit instead.
+ */
 function reportUrlFor(origin: string, d: string): string {
-  return `${origin.replace(/\/+$/, '')}/report?d=${d}`;
+  return `${origin.replace(/\/+$/, '')}/report?d=${d}&end=1`;
 }
 
 /**
@@ -127,18 +138,42 @@ function decodeCalendar(raw: unknown): ReportCalendar | null {
   };
 }
 
-/** Returns null when `d` is missing, corrupt, or from an unknown version. */
-export function decodeReport(d: string | null | undefined): ReportState | null {
-  if (!d) return null;
-  let parsed: unknown;
+function tryParse(candidate: string): Record<string, unknown> | null {
   try {
-    const json = LZString.decompressFromEncodedURIComponent(d);
+    const json = LZString.decompressFromEncodedURIComponent(fromUrlSafe(candidate));
     if (!json) return null;
-    parsed = JSON.parse(json);
+    const parsed: unknown = JSON.parse(json);
+    return isObj(parsed) && parsed.v === VERSION ? parsed : null;
   } catch {
     return null;
   }
-  if (!isObj(parsed) || parsed.v !== VERSION) return null;
+}
+
+/**
+ * Ways a real link gets mangled on its way back to us, tried in order:
+ * as-is; old links whose "+" became spaces; spaces/line breaks inserted by email wrapping;
+ * leftover percent-encoding from double-encoding.
+ */
+function candidates(d: string): string[] {
+  const raw = d.trim();
+  const list = [raw, raw.replace(/ /g, '+'), raw.replace(/\s+/g, '')];
+  try {
+    list.push(decodeURIComponent(raw).replace(/\s+/g, ''));
+  } catch {
+    // not percent-encoded
+  }
+  return [...new Set(list)];
+}
+
+/** Returns null when `d` is missing, corrupt, or from an unknown version. */
+export function decodeReport(d: string | null | undefined): ReportState | null {
+  if (!d) return null;
+  let parsed: Record<string, unknown> | null = null;
+  for (const c of candidates(d)) {
+    parsed = tryParse(c);
+    if (parsed) break;
+  }
+  if (!parsed) return null;
 
   const rawTasks = Array.isArray(parsed.t) ? parsed.t.slice(0, MAX_TASKS) : [];
   const seen = new Set<string>();
