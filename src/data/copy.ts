@@ -106,6 +106,10 @@ export const WIZARD = {
   live: {
     label: 'You could hand off',
     perWeek: 'hours a week',
+    perWeekShort: 'h a week',
+    sheetTitle: 'Your summary so far',
+    sheetOpen: 'Open the full summary',
+    sheetClose: 'Close the summary',
     range: (low: string, high: string) => `${low} to ${high} hours, realistically`,
     cost: (month: string) => `That time is worth ${month} a month.`,
     weekHeading: 'Your week',
@@ -183,5 +187,8 @@ export const WIZARD = {
     next: 'Continue',
     toTasks: 'Pick my tasks',
     toCalendar: 'Continue',
+    // Inside the mobile summary bar (distinct from the in-page buttons).
+    barToCalendar: 'Continue to calendar',
+    barToResults: 'Go to my results',
   },
 } as const;

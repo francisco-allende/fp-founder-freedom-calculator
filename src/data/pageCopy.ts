@@ -163,6 +163,8 @@ export const BOOK = {
   topTasks: 'The first hours to hand off',
   calendarHeading: 'Pick a time for your matching call',
   calendarMissing: 'The booking calendar is coming soon. Your report is already on its way to your inbox.',
+  fallbackLead: 'Prefer a full-screen scheduler?',
+  fallbackLink: 'Open it here',
   callHeading: 'What happens on the call',
   callSteps: [
     'We walk through your report and confirm which hours to hand off first.',
