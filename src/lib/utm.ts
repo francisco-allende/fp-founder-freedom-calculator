@@ -33,3 +33,12 @@ export function captureUtm(search: string): Utm {
 export function getUtm(): Utm {
   return readJSON(STORAGE_KEYS.utm, isUtm) ?? {};
 }
+
+/**
+ * First-touch UTMs without waiting for capture: what an earlier visit stored, else this URL's.
+ * Lets the landing page match the ad on its very first render.
+ */
+export function firstTouchUtm(search: string): Utm {
+  const stored = getUtm();
+  return Object.keys(stored).length > 0 ? stored : parseUtm(search);
+}
