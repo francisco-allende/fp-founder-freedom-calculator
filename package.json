@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc -b",
-    "test:stats": "vitest run --reporter=default --reporter=json --outputFile.json=src/generated/test-stats.json"
+    "test:stats": "vitest run --reporter=default --reporter=json --outputFile.json=src/generated/test-stats.json",
+    "images": "node scripts/build-ad-images.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "4.9.0",
@@ -33,6 +34,7 @@
     "@vitejs/plugin-react": "6.1.1",
     "@vitest/coverage-v8": "5.0.3",
     "jsdom": "29.1.1",
+    "sharp": "0.35.5",
     "typescript": "7.0.2",
     "vite": "8.3.2",
     "vitest": "5.0.3"
