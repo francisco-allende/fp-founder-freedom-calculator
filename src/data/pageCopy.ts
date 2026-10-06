@@ -39,6 +39,7 @@ export const LANDING = {
   who: {
     heading: 'Who it is for',
     intro: 'Founders and owners doing $500K+ a year who have become the bottleneck in their own business.',
+    cardsLabel: 'Five founders this calculator was built for',
     // Real client wording (Second Brain): a short quote + one plain line on who that founder is.
     personas: [
       {

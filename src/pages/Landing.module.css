@@ -429,3 +429,90 @@
 .final h2 {
   margin-bottom: 0;
 }
+
+/* Message match (hero): the ad's image and hook, only for visitors from a known ad. */
+.match {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+@media (min-width: 60rem) {
+  .match {
+    grid-template-columns: 11rem 1fr;
+  }
+}
+
+.matchImage img {
+  border-radius: var(--radius-control);
+}
+
+.hook {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.375rem, 1rem + 1.6vw, var(--fs-31));
+  line-height: 1.15;
+  color: var(--emerald);
+  text-wrap: balance;
+}
+
+/* Who it's for: one card per ad persona. Scrolls inside its own region on small screens. */
+.adCardsScroller {
+  margin-top: var(--space-6);
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  overscroll-behavior-x: contain;
+}
+
+.adCardsScroller:focus-visible {
+  outline-offset: -3px;
+}
+
+.adCards {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--space-3);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(70vw, 16rem);
+  gap: var(--space-4);
+}
+
+.adCard {
+  scroll-snap-align: start;
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+
+.adCard h3 {
+  margin-top: var(--space-2);
+  font-size: var(--fs-16);
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.adCard p {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-20);
+  line-height: 1.2;
+}
+
+@media (min-width: 60rem) {
+  .adCardsScroller {
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+  }
+
+  .adCards {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

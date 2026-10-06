@@ -247,7 +247,9 @@ describe('/privacy and footer', () => {
     at('/', <Landing />);
     expect(screen.getByText('JD')).toBeInTheDocument(); // Justin Donald
     expect(screen.getByText('BR')).toBeInTheDocument(); // Bo Royal
-    expect(document.querySelectorAll('img')).toHaveLength(0);
+    // Testimonials use monograms, never photos (the persona cards are the only images on the page).
+    const proof = screen.getByRole('heading', { name: 'Founders who handed it off' }).closest('section')!;
+    expect(proof.querySelectorAll('img')).toHaveLength(0);
     expect(screen.getByText('hand-picked candidates in 24 h')).toBeInTheDocument();
     expect(screen.getByText('1 in 1,000')).toBeInTheDocument();
   });

@@ -1,6 +1,10 @@
 import { CalendarSearch, FileDown, FlaskConical, Gauge, Map, Route, Wallet, type LucideIcon } from 'lucide-react';
-import { lazy, Suspense } from 'react';
-import { Link } from 'react-router-dom';
+import { lazy, Suspense, useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { AdImage } from '../components/AdImage/AdImage';
+import { AD_CREATIVES } from '../data/ads';
+import { adForUtmContent } from '../lib/adMatch';
+import { firstTouchUtm } from '../lib/utm';
 import { AreaIcon } from '../components/AreaIcon/AreaIcon';
 import { ButtonLink } from '../components/Button/Button';
 import { Footer } from '../components/Footer/Footer';
@@ -29,12 +33,21 @@ const initials = (name: string) =>
 export default function Landing() {
   const quotes = TESTIMONIALS.filter((t) => FEATURED.includes(t.name));
   const [previewRef, previewNear] = useNearViewport<HTMLDivElement>();
+  // Message match: the ad a visitor first came from (utm_content) sets the hero image and hook.
+  const { search } = useLocation();
+  const ad = useMemo(() => adForUtmContent(firstTouchUtm(search).utm_content), [search]);
 
   return (
     <>
       <header className={`${styles.band} ${styles.forest} ${styles.hero}`}>
         <div className={`${styles.inner} ${styles.heroGrid}`}>
           <div className={styles.heroText}>
+            {ad && (
+              <div className={styles.match}>
+                <AdImage ad={ad} priority sizes="(min-width: 60rem) 11rem, 7rem" className={styles.matchImage} />
+                <p className={styles.hook}>{ad.hook}</p>
+              </div>
+            )}
             <h1 className={styles.title}>{BRAND.title}</h1>
             <p className={styles.subtitle}>{BRAND.subtitle}</p>
             <ul className={styles.proof} aria-label="Pareto Talent in numbers">
@@ -97,6 +110,18 @@ export default function Landing() {
           <div className={styles.inner}>
             <h2 id="who">{LANDING.who.heading}</h2>
             <p className={styles.lead}>{LANDING.who.intro}</p>
+            {/* One card per ad persona; a scroll-snap row on small screens, a 5-column grid on wide ones. */}
+            <div className={styles.adCardsScroller} role="region" aria-label={LANDING.who.cardsLabel} tabIndex={0}>
+              <ul className={styles.adCards}>
+                {AD_CREATIVES.map((a) => (
+                  <li key={a.n} className={styles.adCard}>
+                    <AdImage ad={a} sizes="(min-width: 72rem) 13rem, (min-width: 60rem) 18vw, 70vw" />
+                    <h3>{a.persona}</h3>
+                    <p>{a.hook}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
             <ul className={styles.personas}>
               {LANDING.who.personas.map((p) => (
                 <li key={p.title}>
